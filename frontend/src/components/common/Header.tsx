@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { FiMenu, FiMoon, FiSun, FiLogOut } from 'react-icons/fi';
+import { FiArrowLeft, FiMenu, FiMoon, FiSun } from 'react-icons/fi';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../context/AppContext';
 import './Header.css';
 
@@ -14,6 +15,8 @@ export const Header: React.FC<HeaderProps> = ({
   title = 'Controle de Aulas',
   showMenu = true,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const isDarkMode = useAppStore((state) => state.isDarkMode);
   const setIsDarkMode = useAppStore((state) => state.setIsDarkMode);
 
@@ -24,6 +27,17 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleThemeToggle = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleBack = () => {
+    if (location.pathname === '/') return;
+
+    const hasInternalHistory = (window.history.state?.idx ?? 0) > 0;
+    if (hasInternalHistory) {
+      void navigate(-1);
+    } else {
+      void navigate('/');
+    }
   };
 
   return (
@@ -48,8 +62,14 @@ export const Header: React.FC<HeaderProps> = ({
           {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
         </button>
 
-        <button className="header-logout-btn" aria-label="Sair">
-          <FiLogOut size={20} />
+        <button
+          type="button"
+          className="header-logout-btn"
+          onClick={handleBack}
+          aria-label="Voltar"
+          title="Voltar"
+        >
+          <FiArrowLeft size={20} />
         </button>
       </div>
     </header>
