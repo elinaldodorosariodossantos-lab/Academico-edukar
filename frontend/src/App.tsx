@@ -8,6 +8,7 @@ import {
 
 import { Layout } from './components/Layout';
 import { lazyWithRetry } from './lib/lazyWithRetry';
+import { useSupabaseConnectivityMonitor } from './hooks/useSupabaseConnectivityMonitor';
 
 const Dashboard = lazyWithRetry(() => import('./components/pages/Dashboard').then((module) => ({ default: module.Dashboard })), 'dashboard');
 const Alunos = lazyWithRetry(() => import('./components/pages/Alunos').then((module) => ({ default: module.Alunos })), 'alunos');
@@ -19,6 +20,7 @@ const Relatorios = lazyWithRetry(() => import('./components/pages/Relatorios').t
 const Financeiro = lazyWithRetry(() => import('./components/pages/Financeiro').then((module) => ({ default: module.Financeiro })), 'financeiro');
 
 export const App: React.FC = () => {
+  useSupabaseConnectivityMonitor();
 
   return (
 

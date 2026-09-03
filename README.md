@@ -130,6 +130,17 @@ VITE_APP_VERSION=1.0.0
 
 Nunca exponha uma chave `service_role` no frontend.
 
+### Monitor opcional de conectividade
+
+O monitor de conectividade com o Supabase é desativado por padrão. Para ativá-lo, configure:
+
+```env
+VITE_SUPABASE_CONNECTIVITY_MONITOR_ENABLED=true
+VITE_SUPABASE_CONNECTIVITY_MONITOR_INTERVAL_MS=300000
+```
+
+O intervalo mínimo aceito é 60 segundos. A verificação padrão ocorre a cada 5 minutos, somente com a aplicação aberta, online e visível. Ela usa uma requisição `HEAD` limitada a um identificador e não lê, cria, atualiza ou exclui registros.
+
 Na Vercel, cadastre as quatro variáveis em **Project Settings > Environment Variables** para o ambiente Production. O projeto pode ser importado pela raiz do repositório; o `vercel.json` configura a instalação, o build, a pasta de saída e o fallback das rotas da SPA.
 
 ### 3. Prepare o banco de dados
