@@ -335,21 +335,21 @@ export const Alunos: React.FC = () => {
 
                     return (
                       <tr key={aluno.id}>
-                        <td className="aluno-name">
+                        <td className="aluno-name" data-label="Aluno">
                           {aluno.nome}
                         </td>
 
-                        <td>{aluno.turma || 'Não definida'}</td>
+                        <td data-label="Turma">{aluno.turma || 'Não definida'}</td>
 
-                        <td>
+                        <td data-label="Professor">
                           {turmaInfo?.professor || 'Não informado'}
                         </td>
 
-                        <td>
+                        <td data-label="Horário">
                           {getHorarioDetalhadoAluno(aluno)}
                         </td>
 
-                        <td>
+                        <td data-label="Responsável">
                           <div className="responsavel-cell">
                             <strong>{aluno.responsavel || 'Não informado'}</strong>
                             {aluno.telefone && <span>{aluno.telefone}</span>}
@@ -357,11 +357,11 @@ export const Alunos: React.FC = () => {
                           </div>
                         </td>
 
-                        <td>
+                        <td data-label="Dias">
                           {aluno.diasAula?.length ? aluno.diasAula.join(', ') : getDiasTurma(aluno.turma)}
                         </td>
 
-                        <td>
+                        <td data-label="Status">
                           <span
                             className={`status-badge status-${(
                               aluno.status || 'ativo'
@@ -371,7 +371,7 @@ export const Alunos: React.FC = () => {
                           </span>
                         </td>
 
-                        <td>
+                        <td data-label="Ações">
                           <div className="aluno-actions">
                             <button
                               type="button"

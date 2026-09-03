@@ -75,6 +75,7 @@ body.dark-mode .search-bar input {
 
 .alunos-table {
   width: 100%;
+  min-width: 1160px;
   border-collapse: collapse;
 }
 
@@ -94,6 +95,8 @@ body.dark-mode .alunos-table thead {
   font-weight: 600;
   color: var(--gray-700);
   font-size: 0.875rem;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 body.dark-mode .alunos-table th {
@@ -105,7 +108,18 @@ body.dark-mode .alunos-table th {
   border-bottom: 1px solid var(--gray-200);
   color: var(--gray-900);
   vertical-align: middle;
+  overflow-wrap: normal;
+  word-break: normal;
 }
+
+.alunos-table th:nth-child(1), .alunos-table td:nth-child(1) { min-width: 135px; }
+.alunos-table th:nth-child(2), .alunos-table td:nth-child(2) { min-width: 130px; }
+.alunos-table th:nth-child(3), .alunos-table td:nth-child(3) { min-width: 130px; }
+.alunos-table th:nth-child(4), .alunos-table td:nth-child(4) { min-width: 185px; }
+.alunos-table th:nth-child(5), .alunos-table td:nth-child(5) { min-width: 220px; }
+.alunos-table th:nth-child(6), .alunos-table td:nth-child(6) { min-width: 105px; }
+.alunos-table th:nth-child(7), .alunos-table td:nth-child(7) { min-width: 95px; }
+.alunos-table th:nth-child(8), .alunos-table td:nth-child(8) { min-width: 152px; }
 
 body.dark-mode .alunos-table td {
   border-bottom-color: var(--dark-border);
@@ -125,7 +139,8 @@ body.dark-mode .alunos-table tbody tr:hover {
 }
 
 .status-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   font-size: 0.875rem;
@@ -147,6 +162,7 @@ body.dark-mode .alunos-table tbody tr:hover {
   align-items: center;
   gap: var(--spacing-sm);
   white-space: nowrap;
+  flex-wrap: nowrap;
 }
 
 .action-btn {
@@ -331,6 +347,7 @@ body.dark-mode .form-group label {
 .responsavel-cell span {
   color: var(--gray-500);
   font-size: 0.72rem;
+  overflow-wrap: anywhere;
 }
 
 body.dark-mode .responsavel-cell strong {
@@ -412,6 +429,7 @@ body.dark-mode .optional-label {
   color: var(--gray-900);
   font-size: 0.9rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 body.dark-mode .aluno-details-section {
@@ -459,12 +477,93 @@ body.dark-mode .aluno-details-grid dt {
     grid-column: auto;
   }
 
+  .alunos-table-wrapper {
+    overflow: visible;
+  }
+
   .alunos-table {
+    display: block;
+    min-width: 0;
     font-size: 0.875rem;
   }
 
-  .alunos-table th,
-  .alunos-table td {
-    padding: var(--spacing-sm) var(--spacing-md);
+  .alunos-table thead {
+    display: none;
+  }
+
+  .alunos-table tbody {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .alunos-table tbody tr {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    background: var(--white);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  }
+
+  .alunos-table td,
+  .alunos-table td:nth-child(n) {
+    display: grid;
+    grid-template-columns: minmax(92px, 32%) minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+    overflow-wrap: anywhere;
+  }
+
+  .alunos-table td::before {
+    content: attr(data-label);
+    color: var(--gray-500);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .alunos-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .alunos-table td[colspan] {
+    display: block;
+    padding: 1.25rem;
+  }
+
+  .alunos-table td[colspan]::before {
+    content: none;
+  }
+
+  .alunos-table .aluno-actions {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .alunos-table .status-badge {
+    justify-self: start;
+  }
+
+  .alunos-table .aluno-actions .action-btn {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  body.dark-mode .alunos-table tbody tr {
+    border-color: var(--dark-border);
+    background: var(--dark-surface);
+  }
+
+  body.dark-mode .alunos-table td {
+    border-bottom-color: var(--dark-border);
+  }
+
+  body.dark-mode .alunos-table td::before {
+    color: var(--gray-400);
   }
 }

@@ -72,14 +72,11 @@ textarea {
   scrollbar-gutter: stable;
 }
 
-.alunos-table { min-width: 1080px; }
 .horarios-week-table { min-width: 1080px; }
 .report-table { min-width: 680px; }
 .financeiro-table { min-width: 980px; }
 .financeiro-table.financeiro-profile-table { min-width: 720px; }
 
-.alunos-table th,
-.alunos-table td,
 .horarios-week-table th,
 .horarios-week-table td,
 .report-table th,
