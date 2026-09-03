@@ -31,9 +31,13 @@ Crie `frontend/.env` com base em `frontend/.env.example`:
 ```env
 VITE_SUPABASE_URL=https://SEU_PROJETO.supabase.co
 VITE_SUPABASE_ANON_KEY=SUA_CHAVE_ANONIMA
+VITE_APP_NAME=Edukar XP
+VITE_APP_VERSION=1.0.0
 ```
 
 Encontre esses valores no painel do Supabase em **Project Settings > API**. Use somente a chave pública/anon no frontend. Nunca adicione uma chave `service_role` ao projeto React.
+
+Para produção, configure as mesmas quatro variáveis no ambiente **Production** da Vercel. Não é necessário criar outro projeto Supabase quando a aplicação deve continuar utilizando o banco atual.
 
 ## 4. Executar e validar
 

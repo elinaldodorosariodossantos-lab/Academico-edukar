@@ -124,9 +124,13 @@ Copie `.env.example` para `.env` e informe as credenciais públicas do seu proje
 ```env
 VITE_SUPABASE_URL=https://SEU_PROJETO.supabase.co
 VITE_SUPABASE_ANON_KEY=SUA_CHAVE_ANONIMA
+VITE_APP_NAME=Edukar XP
+VITE_APP_VERSION=1.0.0
 ```
 
 Nunca exponha uma chave `service_role` no frontend.
+
+Na Vercel, cadastre as quatro variáveis em **Project Settings > Environment Variables** para o ambiente Production. O projeto pode ser importado pela raiz do repositório; o `vercel.json` configura a instalação, o build, a pasta de saída e o fallback das rotas da SPA.
 
 ### 3. Prepare o banco de dados
 

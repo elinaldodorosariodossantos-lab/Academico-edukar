@@ -6,6 +6,9 @@ import { queryClient } from './lib/queryClient';
 import './styles/globals.css';
 import './styles/pages-professional.css';
 import './styles/responsive.css';
+import { appConfig } from './config/env';
+
+document.title = appConfig.name;
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>

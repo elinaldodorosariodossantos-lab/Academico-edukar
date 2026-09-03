@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fi';
 import './Sidebar.css';
 import edukarLogo from '../../../EDUKARXP-horizontal.png';
+import { appConfig } from '../../config/env';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -60,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
 
         <div className="sidebar-footer">
           <div className="sidebar-info">
-            <p className="text-small text-muted">Versão 1.0.0</p>
+            <p className="text-small text-muted">Versão {appConfig.version}</p>
             <p className="text-small text-muted">© 2026 Edukar XP</p>
           </div>
         </div>

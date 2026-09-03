@@ -2,6 +2,9 @@
   "name": "edukar-xp",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend run build",

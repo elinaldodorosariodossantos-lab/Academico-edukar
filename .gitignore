@@ -1,0 +1,18 @@
+# Dependencies and generated output
+node_modules/
+dist/
+.vite/
+
+# Local environment files (keep examples versioned)
+.env
+.env.*
+!.env.example
+
+# Vercel local metadata
+.vercel/
+
+# Logs and editor/OS files
+*.log
+.DS_Store
+Thumbs.db
+
