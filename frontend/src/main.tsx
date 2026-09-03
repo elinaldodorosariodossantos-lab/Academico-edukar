@@ -8,7 +8,7 @@ import './styles/pages-professional.css';
 import './styles/responsive.css';
 import { appConfig } from './config/env';
 
-document.title = appConfig.name;
+document.title = `Sistema Acadêmico ${appConfig.name}`;
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
