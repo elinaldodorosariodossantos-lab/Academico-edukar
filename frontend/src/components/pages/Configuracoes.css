@@ -1,0 +1,261 @@
+.configuracoes-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.configuracoes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+}
+
+.configuracoes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.config-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  min-height: 220px;
+}
+
+.config-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.config-card-header h3 {
+  margin: 0 0 var(--spacing-sm);
+  color: var(--gray-900);
+}
+
+body.dark-mode .config-card-header h3 {
+  color: var(--dark-text);
+}
+
+.config-card-header p {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: 0.92rem;
+}
+
+body.dark-mode .config-card-header p {
+  color: var(--gray-400);
+}
+
+.config-status {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.config-subitems {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-left: 0;
+  margin: 0;
+}
+
+.config-subitems li {
+  position: relative;
+  padding-left: 1.2rem;
+  color: var(--gray-700);
+}
+
+body.dark-mode .config-subitems li {
+  color: var(--dark-text);
+}
+
+.config-subitems li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.config-card-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--gray-600);
+  font-size: 0.85rem;
+}
+
+body.dark-mode .config-card-footer {
+  border-top-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.config-link-btn {
+  background: transparent;
+  color: var(--primary-color);
+  font-weight: 600;
+  padding: 0;
+}
+
+.config-link-btn:hover {
+  text-decoration: underline;
+}
+
+.financeiro-config-card {
+  width: 100%;
+}
+
+.financeiro-config-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.financeiro-config-header h2 {
+  margin: 0;
+}
+
+.financeiro-config-table-wrap {
+  overflow-x: auto;
+}
+
+.financeiro-config-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.financeiro-config-table th,
+.financeiro-config-table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: left;
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-800);
+}
+
+body.dark-mode .financeiro-config-table th,
+body.dark-mode .financeiro-config-table td {
+  border-bottom-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.financeiro-config-table th {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-600);
+  background: rgba(37, 99, 235, 0.03);
+}
+
+body.dark-mode .financeiro-config-table th {
+  color: var(--dark-text);
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  display: inline-block;
+  background: currentColor;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.status-ativo {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: var(--success-color);
+}
+
+.status-inativo {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
+.status-switch {
+  position: relative;
+  width: 3.25rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  background: var(--gray-300);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  transition: all var(--transition-base);
+  padding: 0;
+}
+
+.status-switch.active {
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.status-switch-thumb {
+  position: absolute;
+  top: 0.18rem;
+  left: 0.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+  transition: transform var(--transition-base);
+}
+
+.status-switch.active .status-switch-thumb {
+  transform: translateX(1.35rem);
+}
+
+@media (max-width: 768px) {
+  .configuracoes-page {
+    padding: var(--spacing-lg);
+  }
+
+  .configuracoes-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .config-card-header {
+    flex-direction: column;
+  }
+
+  .financeiro-config-table th,
+  .financeiro-config-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}

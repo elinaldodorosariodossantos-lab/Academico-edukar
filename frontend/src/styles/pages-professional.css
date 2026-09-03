@@ -1,0 +1,413 @@
+/* Professional visual system shared by the academic pages. */
+.alunos-container,
+.turmas-container,
+.frequencia-container,
+.page-container,
+.relatorios-container,
+.financeiro-page {
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 1.75rem 2rem 2.75rem;
+  gap: 1.25rem;
+}
+
+.alunos-container > .alunos-header,
+.turmas-container > .turmas-header,
+.frequencia-container > .frequencia-header,
+.page-container > .page-header {
+  position: relative;
+  align-items: center;
+  min-height: 112px;
+  padding: 1.4rem 1.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(96, 165, 250, 0.16), transparent 24%),
+    linear-gradient(125deg, #eff6ff, #ffffff 68%);
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.05);
+}
+
+.alunos-container > .alunos-header::after,
+.turmas-container > .turmas-header::after,
+.frequencia-container > .frequencia-header::after,
+.page-container > .page-header::after {
+  content: '';
+  position: absolute;
+  right: -42px;
+  bottom: -88px;
+  width: 180px;
+  height: 180px;
+  border: 30px solid rgba(37, 99, 235, 0.045);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.alunos-container > .alunos-header > div:first-child::before,
+.turmas-container > .turmas-header > div:first-child::before,
+.frequencia-container > .frequencia-header > div:first-child::before,
+.page-container > .page-header > div:first-child::before {
+  content: 'GESTÃO ACADÊMICA';
+  display: block;
+  margin-bottom: .35rem;
+  color: #2563eb;
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.alunos-container > .alunos-header h1,
+.turmas-container > .turmas-header h1,
+.frequencia-container > .frequencia-header h1,
+.page-container > .page-header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  font-weight: 760;
+  letter-spacing: -.035em;
+}
+
+.alunos-container > .alunos-header p,
+.turmas-container > .turmas-header p,
+.frequencia-container > .frequencia-header p,
+.page-container > .page-header p {
+  margin: .35rem 0 0;
+  color: #64748b;
+  font-size: .83rem;
+}
+
+.alunos-container > .alunos-header .btn,
+.turmas-container > .turmas-header .btn,
+.frequencia-container > .frequencia-header .btn,
+.page-container > .page-header .btn {
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+}
+
+.alunos-container > .card,
+.frequencia-container > .card,
+.report-filter-card,
+.report-card-block,
+.report-generator-card,
+.report-preview-card,
+.financeiro-filters-card,
+.financeiro-table-card {
+  border-color: rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.045);
+}
+
+.search-bar {
+  min-height: 50px;
+  margin-bottom: 1.15rem;
+  padding: .65rem .9rem;
+  border: 1px solid #dbe3ee;
+  border-radius: 13px;
+  background: #f8fafc;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.search-bar:focus-within {
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+}
+
+.search-bar svg { color: #64748b; }
+
+.alunos-table-wrapper,
+.horarios-table-wrap,
+.report-table-wrap,
+.financeiro-table-wrap {
+  overflow: auto;
+  border: 1px solid #e8edf4;
+  border-radius: 14px;
+}
+
+.alunos-table,
+.horarios-week-table,
+.report-table,
+.financeiro-table {
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.alunos-table thead,
+.alunos-table th,
+.horarios-week-table th,
+.report-table th,
+.financeiro-table th {
+  color: #64748b;
+  background: #f8fafc;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+
+.alunos-table th,
+.alunos-table td,
+.horarios-week-table th,
+.horarios-week-table td,
+.report-table th,
+.report-table td,
+.financeiro-table th,
+.financeiro-table td {
+  padding: .9rem 1rem;
+  border-right: 0;
+  border-left: 0;
+  border-color: #edf1f6;
+}
+
+.alunos-table tbody tr,
+.report-table tbody tr,
+.financeiro-table tbody tr {
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.alunos-table tbody tr:hover,
+.report-table tbody tr:hover,
+.financeiro-table tbody tr:hover {
+  background: #f8fbff;
+  box-shadow: inset 3px 0 #3b82f6;
+}
+
+.status-badge,
+.report-count,
+.upcoming-badge {
+  border-radius: 999px;
+  font-size: .67rem;
+  font-weight: 800;
+  letter-spacing: .025em;
+}
+
+.aluno-actions,
+.turma-actions { gap: .4rem; }
+
+.aluno-actions .action-btn,
+.turma-actions .action-btn,
+.table-actions .action-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  color: #475569;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.04);
+}
+
+.aluno-actions .action-btn:hover,
+.turma-actions .action-btn:hover,
+.table-actions .action-btn:hover {
+  color: #2563eb;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(37, 99, 235, 0.1);
+}
+
+.aluno-actions .delete-btn:hover,
+.turma-actions .delete-btn:hover,
+.table-actions .delete-btn:hover {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.turmas-grid {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.turma-card {
+  position: relative;
+  gap: 1rem;
+  padding: 1.25rem !important;
+  overflow: hidden;
+  border-color: rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.045);
+}
+
+.turma-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa, transparent);
+}
+
+.turma-card:hover { border-color: rgba(37, 99, 235, .22); box-shadow: 0 18px 38px rgba(15, 23, 42, .08); }
+.turma-card-header h3 { font-size: 1.05rem; letter-spacing: -.02em; }
+.turma-info { display: grid; gap: .5rem; }
+.turma-info p { padding: .55rem .7rem; border-radius: 9px; background: #f8fafc; font-size: .8rem; }
+.turma-dias { color: #64748b; font-size: .76rem; }
+
+.horarios-table-wrap { background: #fff; box-shadow: 0 12px 34px rgba(15,23,42,.05); }
+.horarios-week-table { border: 0; }
+.horarios-aula-cell { min-height: 76px; transition: background-color 160ms ease; }
+.horarios-aula-cell.active { background: linear-gradient(135deg, #eff6ff, #f8fbff); }
+.horarios-aula-info { padding: .25rem; }
+.horarios-aula-info strong { color: #1d4ed8; }
+
+.frequencia-filters {
+  gap: 1rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(148,163,184,.2);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 9px 28px rgba(15,23,42,.04);
+}
+
+.frequencia-filters select,
+.frequencia-filters input,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  min-height: 44px;
+  border-color: #dbe3ee;
+  border-radius: 11px;
+  background: #f8fafc;
+}
+
+.turma-info-header { padding: 1rem 1.1rem; border: 1px solid #dbeafe; border-radius: 14px; background: linear-gradient(105deg,#eff6ff,#fff); }
+.alunos-count { min-width: 112px; padding: .75rem 1rem; border-radius: 13px; }
+.count-badge { width: 42px; height: 42px; font-size: 1.15rem; box-shadow: 0 7px 15px rgba(37,99,235,.22); }
+.alunos-lista { overflow: hidden; border: 1px solid #e8edf4; border-radius: 14px; }
+.alunos-lista .alunos-header { min-height: auto; padding: .8rem 1rem; border: 0; border-radius: 0; background: #f8fafc; box-shadow: none; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; }
+.alunos-lista .alunos-header::after { display: none; }
+.aluno-row { padding: .85rem 1rem; }
+.presenca-btn { min-height: 38px; border-radius: 10px; }
+.presenca-btn.presente { box-shadow: 0 5px 13px rgba(16,185,129,.08); }
+.presenca-btn.falta { box-shadow: 0 5px 13px rgba(239,68,68,.08); }
+
+.relatorios-grid { gap: 1rem; }
+.relatorio-card { position: relative; min-height: 132px; overflow: hidden; border: 1px solid rgba(148,163,184,.2); border-left: 0; border-radius: 18px; box-shadow: 0 10px 30px rgba(15,23,42,.045); }
+.relatorio-card::before { content: ''; position: absolute; top: 0; right: 0; left: 0; height: 3px; background: #2563eb; }
+.relatorio-card.purple::before { background: #8b5cf6; }
+.relatorio-card.green::before { background: #10b981; }
+.relatorio-card.red::before { background: #ef4444; }
+.report-filter-card, .report-card-block, .report-generator-card, .report-preview-card, .report-export-card { border-radius: 18px; }
+.report-type-selector label { border-radius: 13px; }
+.report-type-selector label:hover { border-color: #bfdbfe; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(15,23,42,.05); }
+
+.financeiro-summary-grid { gap: .85rem; }
+.financeiro-stat-card {
+  --finance-accent: #2563eb;
+  --finance-soft: #eff6ff;
+  position: relative;
+  isolation: isolate;
+  min-height: 122px;
+  padding: 1.25rem !important;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--finance-accent) 18%, #e2e8f0);
+  border-left-width: 1px;
+  border-radius: 17px;
+  color: var(--finance-accent);
+  background: linear-gradient(145deg, #fff 28%, var(--finance-soft));
+  box-shadow: 0 9px 28px rgba(15,23,42,.045);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+.financeiro-stat-card.blue { --finance-accent: #2563eb; --finance-soft: #eff6ff; }
+.financeiro-stat-card.green { --finance-accent: #059669; --finance-soft: #ecfdf5; }
+.financeiro-stat-card.orange { --finance-accent: #d97706; --finance-soft: #fffbeb; }
+.financeiro-stat-card.purple { --finance-accent: #7c3aed; --finance-soft: #f5f3ff; }
+.financeiro-stat-card.blue-soft { --finance-accent: #0284c7; --finance-soft: #f0f9ff; }
+.financeiro-stat-card.green-soft { --finance-accent: #0f9f75; --finance-soft: #f0fdf8; }
+.financeiro-stat-card.red-soft { --finance-accent: #dc2626; --finance-soft: #fef2f2; }
+.financeiro-stat-card::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--finance-accent), color-mix(in srgb, var(--finance-accent) 22%, transparent));
+}
+.financeiro-stat-card::after { content: ''; position: absolute; z-index: -1; top: -42px; right: -35px; width: 112px; height: 112px; border: 22px solid currentColor; border-radius: 50%; opacity: .055; }
+.financeiro-stat-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--finance-accent) 36%, #e2e8f0); box-shadow: 0 16px 34px color-mix(in srgb, var(--finance-accent) 10%, transparent); }
+.financeiro-stat-card .financeiro-stat-label { position: relative; margin-bottom: .65rem; color: #64748b; font-size: .68rem; font-weight: 750; letter-spacing: .065em; text-transform: uppercase; }
+.financeiro-stat-card .financeiro-stat-value { position: relative; color: var(--finance-accent); font-size: clamp(1.35rem, 2vw, 1.65rem); font-weight: 800; line-height: 1.1; letter-spacing: -.035em; }
+.financeiro-tabs { padding: 5px; border: 1px solid #e2e8f0; border-radius: 14px; background: #f8fafc; box-shadow: 0 5px 16px rgba(15,23,42,.035); }
+.financeiro-tabs button { min-height: 40px; border-radius: 10px; }
+.financeiro-tabs button.active { box-shadow: 0 6px 15px rgba(37,99,235,.18); }
+.financeiro-filters { gap: .85rem; }
+.financeiro-filters select, .financeiro-table input, .financeiro-table select { min-height: 42px; border-radius: 10px; background: #f8fafc; }
+.financeiro-modalidade-option { border-radius: 10px; transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease; }
+.financeiro-modalidade-option:hover { transform: translateY(-1px); }
+
+body.dark-mode .alunos-container > .alunos-header,
+body.dark-mode .turmas-container > .turmas-header,
+body.dark-mode .frequencia-container > .frequencia-header,
+body.dark-mode .page-container > .page-header {
+  border-color: rgba(96,165,250,.15);
+  background: radial-gradient(circle at 88% 12%,rgba(59,130,246,.13),transparent 25%),linear-gradient(125deg,#1d293b,var(--dark-surface));
+  box-shadow: 0 16px 38px rgba(0,0,0,.14);
+}
+
+body.dark-mode .search-bar,
+body.dark-mode .frequencia-filters,
+body.dark-mode .horarios-table-wrap { border-color: var(--dark-border); background: var(--dark-surface); }
+body.dark-mode .alunos-table-wrapper,
+body.dark-mode .horarios-table-wrap,
+body.dark-mode .report-table-wrap,
+body.dark-mode .financeiro-table-wrap { border-color: var(--dark-border); }
+body.dark-mode .alunos-table th,
+body.dark-mode .horarios-week-table th,
+body.dark-mode .report-table th,
+body.dark-mode .financeiro-table th,
+body.dark-mode .alunos-lista .alunos-header { background: var(--dark-bg); color: #cbd5e1; }
+body.dark-mode .alunos-table tbody tr:hover,
+body.dark-mode .report-table tbody tr:hover,
+body.dark-mode .financeiro-table tbody tr:hover { background: rgba(59,130,246,.07); }
+body.dark-mode .turma-card { border-color: var(--dark-border); box-shadow: 0 12px 30px rgba(0,0,0,.13); }
+body.dark-mode .turma-info p { color: var(--dark-text); background: rgba(255,255,255,.04); }
+body.dark-mode .horarios-aula-cell.active { background: rgba(37,99,235,.12); }
+body.dark-mode .frequencia-filters select,
+body.dark-mode .frequencia-filters input,
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea { border-color: var(--dark-border); background: var(--dark-bg); color: var(--dark-text); }
+body.dark-mode .turma-info-header { border-color: #334e75; background: linear-gradient(105deg,rgba(37,99,235,.12),rgba(37,99,235,.04)); }
+body.dark-mode .alunos-lista { border-color: var(--dark-border); }
+body.dark-mode .relatorio-card { border-color: var(--dark-border); box-shadow: 0 10px 30px rgba(0,0,0,.13); }
+body.dark-mode .financeiro-stat-card { border-color: color-mix(in srgb, var(--finance-accent) 26%, var(--dark-border)); background: linear-gradient(145deg,var(--dark-surface) 28%,color-mix(in srgb,var(--finance-accent) 10%,var(--dark-surface))); box-shadow: 0 10px 30px rgba(0,0,0,.13); }
+body.dark-mode .financeiro-stat-card:hover { border-color: color-mix(in srgb,var(--finance-accent) 48%,var(--dark-border)); box-shadow: 0 17px 36px rgba(0,0,0,.2); }
+body.dark-mode .financeiro-stat-card .financeiro-stat-label { color: #a8b3c4; }
+body.dark-mode .financeiro-stat-card .financeiro-stat-value { color: color-mix(in srgb,var(--finance-accent) 72%,#fff); }
+
+@media (max-width: 900px) {
+  .alunos-container,
+  .turmas-container,
+  .frequencia-container,
+  .page-container,
+  .relatorios-container,
+  .financeiro-page { padding: 1.25rem; }
+}
+
+@media (max-width: 640px) {
+  .alunos-container,
+  .turmas-container,
+  .frequencia-container,
+  .page-container,
+  .relatorios-container,
+  .financeiro-page { padding: 1rem; }
+  .alunos-container > .alunos-header,
+  .turmas-container > .turmas-header,
+  .frequencia-container > .frequencia-header,
+  .page-container > .page-header { align-items: flex-start; flex-direction: column; padding: 1.2rem; border-radius: 16px; }
+  .alunos-container > .alunos-header .btn,
+  .turmas-container > .turmas-header .btn,
+  .frequencia-container > .frequencia-header .btn,
+  .page-container > .page-header .btn { width: 100%; }
+}

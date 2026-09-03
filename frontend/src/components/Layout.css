@@ -1,0 +1,40 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gray-50);
+}
+
+body.dark-mode .layout {
+  background-color: var(--dark-bg);
+}
+
+.layout-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 280px;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .layout-content {
+    margin-left: 0;
+    margin-top: 0;
+  }
+}
+
+.layout-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0;
+}
+
+/* Smooth transitions */
+.layout,
+.layout-content,
+.layout-main {
+  transition: all var(--transition-base);
+}

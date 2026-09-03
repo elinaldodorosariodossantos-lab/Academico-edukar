@@ -1,0 +1,191 @@
+.horarios-table-wrap,
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.horarios-week-table,
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.horarios-week-table {
+  min-width: 1080px;
+  border: 1px solid #e5e7eb;
+}
+
+.horarios-week-table th,
+.horarios-week-table td,
+.data-table th,
+.data-table td {
+  padding: 0.8rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.horarios-week-table th,
+.data-table th {
+  color: #475569;
+  background: #f8fafc;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.horarios-week-table th:not(:first-child) {
+  min-width: 130px;
+}
+
+.horarios-turma-cell {
+  min-width: 170px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.horarios-turma-cell div {
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.horarios-aula-cell {
+  vertical-align: top;
+  background: #fff;
+}
+
+.horarios-aula-cell.active {
+  background: #f1f5f9;
+}
+
+.horarios-aula-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.horarios-aula-info strong {
+  color: #0f172a;
+  font-size: 0.82rem;
+}
+
+.horarios-aula-info span,
+.horarios-no-aula,
+.horarios-empty {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.horarios-empty {
+  padding: 1rem !important;
+  text-align: center !important;
+}
+
+.horarios-list-title {
+  margin: 0 0 1rem;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.action-btn {
+  display: grid;
+  place-items: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+  color: #2563eb;
+  background: #eff6ff;
+  border-radius: 0.55rem;
+}
+
+.action-btn.delete-btn {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+body.dark-mode .page-header h1 {
+  color: var(--dark-text);
+}
+
+body.dark-mode .page-header p {
+  color: #94a3b8;
+}
+
+body.dark-mode .action-btn {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.18);
+}
+
+body.dark-mode .action-btn.delete-btn {
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.16);
+}
+
+body.dark-mode .horarios-week-table,
+body.dark-mode .data-table,
+body.dark-mode .horarios-aula-cell {
+  color: var(--dark-text);
+  background: var(--dark-surface);
+}
+
+body.dark-mode .horarios-week-table th,
+body.dark-mode .data-table th,
+body.dark-mode .horarios-aula-cell.active {
+  color: #cbd5e1;
+  background: var(--dark-bg);
+}
+
+body.dark-mode .horarios-week-table,
+body.dark-mode .horarios-week-table th,
+body.dark-mode .horarios-week-table td,
+body.dark-mode .data-table th,
+body.dark-mode .data-table td {
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .horarios-turma-cell,
+body.dark-mode .horarios-aula-info strong,
+body.dark-mode .horarios-list-title,
+body.dark-mode .data-table td,
+body.dark-mode .turma-form label {
+  color: var(--dark-text);
+}
+
+body.dark-mode .horarios-turma-cell div,
+body.dark-mode .horarios-aula-info span,
+body.dark-mode .horarios-no-aula,
+body.dark-mode .horarios-empty {
+  color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+  }
+}
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  margin: 0 0 0.35rem;
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 0;
+  color: #64748b;
+}

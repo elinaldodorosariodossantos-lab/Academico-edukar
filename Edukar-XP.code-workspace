@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "Frontend — React",
+      "path": "frontend"
+    },
+    {
+      "name": "Backend — Supabase",
+      "path": "backend"
+    }
+  ],
+  "settings": {
+    "explorer.compactFolders": false,
+    "files.exclude": {
+      ".git": true,
+      ".vite": true,
+      "node_modules": true,
+      "dist": true
+    },
+    "search.exclude": {
+      ".vite": true,
+      "node_modules": true,
+      "dist": true
+    }
+  }
+}

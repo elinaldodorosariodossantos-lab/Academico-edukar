@@ -1,0 +1,134 @@
+.notification-container {
+  position: fixed;
+  top: 80px;
+  right: var(--spacing-lg);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 400px;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.3s ease-out;
+}
+
+body.dark-mode .notification {
+  background-color: var(--dark-surface);
+  border-color: var(--dark-border);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.notification-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-message {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+
+body.dark-mode .notification-close {
+  color: var(--gray-400);
+}
+
+.notification-close:hover {
+  color: var(--gray-900);
+}
+
+body.dark-mode .notification-close:hover {
+  color: var(--dark-text);
+}
+
+/* Success Notification */
+.notification-success {
+  border-left: 4px solid var(--success-color);
+}
+
+.notification-success .notification-icon {
+  color: var(--success-color);
+}
+
+/* Error Notification */
+.notification-error {
+  border-left: 4px solid var(--danger-color);
+}
+
+.notification-error .notification-icon {
+  color: var(--danger-color);
+}
+
+/* Warning Notification */
+.notification-warning {
+  border-left: 4px solid var(--warning-color);
+}
+
+.notification-warning .notification-icon {
+  color: var(--warning-color);
+}
+
+/* Info Notification */
+.notification-info {
+  border-left: 4px solid var(--info-color);
+}
+
+.notification-info .notification-icon {
+  color: var(--info-color);
+}
+
+@media (max-width: 480px) {
+  .notification-container {
+    right: var(--spacing-md);
+    left: var(--spacing-md);
+    max-width: none;
+    top: auto;
+    bottom: var(--spacing-lg);
+  }
+
+  .notification {
+    font-size: 0.875rem;
+    padding: var(--spacing-md);
+  }
+}

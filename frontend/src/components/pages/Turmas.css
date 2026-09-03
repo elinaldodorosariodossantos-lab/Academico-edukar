@@ -1,0 +1,228 @@
+.turmas-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.turmas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.turmas-header h1 {
+  margin: 0;
+  color: var(--gray-900);
+}
+
+body.dark-mode .turmas-header h1 {
+  color: var(--dark-text);
+}
+
+.turmas-header p {
+  margin: var(--spacing-sm) 0 0 0;
+  color: var(--gray-500);
+}
+
+body.dark-mode .turmas-header p {
+  color: var(--gray-400);
+}
+
+.turmas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.turma-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.turma-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.turma-card-header h3 {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: 1.25rem;
+}
+
+body.dark-mode .turma-card-header h3 {
+  color: var(--dark-text);
+}
+
+.turma-card-header p {
+  margin: var(--spacing-sm) 0 0 0;
+  font-size: 0.875rem;
+}
+
+.turma-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  color: var(--gray-500);
+}
+
+.action-btn:hover {
+  background-color: var(--gray-100);
+  color: var(--primary-color);
+}
+
+body.dark-mode .action-btn:hover {
+  background-color: var(--dark-bg);
+}
+
+.action-btn.delete-btn:hover {
+  color: var(--danger-color);
+}
+
+.turma-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.turma-info p {
+  margin: 0;
+  color: var(--gray-700);
+  font-size: 0.9375rem;
+}
+
+body.dark-mode .turma-info p {
+  color: var(--dark-text);
+}
+
+.turma-info strong {
+  color: var(--gray-900);
+}
+
+body.dark-mode .turma-info strong {
+  color: var(--dark-text);
+}
+
+.turma-dias {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--gray-200);
+}
+
+body.dark-mode .turma-dias {
+  border-top-color: var(--dark-border);
+}
+
+.turma-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.9375rem;
+}
+
+body.dark-mode .form-group label {
+  color: var(--dark-text);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.dias-checkbox {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--gray-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+body.dark-mode .dias-checkbox {
+  background-color: var(--dark-bg);
+  border-color: var(--dark-border);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.checkbox-label span {
+  color: var(--gray-700);
+  font-size: 0.9375rem;
+}
+
+body.dark-mode .checkbox-label span {
+  color: var(--dark-text);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .turmas-container {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+
+  .turmas-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .turmas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dias-checkbox {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,26 @@
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 108px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-status--pago {
+  color: #047857;
+  background-color: #d1fae5;
+}
+
+.badge-status--permuta {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+
+.badge-status--pendente {
+  color: #b91c1c;
+  background-color: #fee2e2;
+}

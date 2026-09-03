@@ -1,0 +1,518 @@
+/* Responsive safeguards shared by every page. No visual or business behavior changes. */
+html,
+body,
+#app {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+.layout,
+.layout-content,
+.layout-main,
+.card,
+.alunos-container,
+.turmas-container,
+.frequencia-container,
+.relatorios-container,
+.financeiro-page,
+.page-container,
+.aluno-profile-page {
+  min-width: 0;
+}
+
+.layout-content,
+.layout-main {
+  width: auto;
+}
+
+.layout-main {
+  overscroll-behavior: contain;
+}
+
+.alunos-container,
+.turmas-container,
+.frequencia-container,
+.relatorios-container,
+.financeiro-page,
+.page-container,
+.aluno-profile-page {
+  width: min(100%, 1480px);
+  margin-inline: auto;
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.alunos-table-wrapper,
+.horarios-table-wrap,
+.table-wrapper,
+.report-table-wrap,
+.financeiro-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+.alunos-table { min-width: 1080px; }
+.horarios-week-table { min-width: 1080px; }
+.report-table { min-width: 680px; }
+.financeiro-table { min-width: 980px; }
+.financeiro-table.financeiro-profile-table { min-width: 720px; }
+
+.alunos-table th,
+.alunos-table td,
+.horarios-week-table th,
+.horarios-week-table td,
+.report-table th,
+.report-table td,
+.financeiro-table th,
+.financeiro-table td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.aluno-actions,
+.turma-actions,
+.table-actions,
+.modal-actions,
+.financeiro-actions,
+.financeiro-save-all {
+  flex-wrap: wrap;
+}
+
+@media (min-width: 1600px) {
+  .dashboard,
+  .alunos-container,
+  .turmas-container,
+  .frequencia-container,
+  .relatorios-container,
+  .financeiro-page,
+  .page-container,
+  .aluno-profile-page {
+    padding-inline: clamp(2rem, 3vw, 3.5rem);
+  }
+}
+
+/* Notebook and tablet: use the existing sidebar as an off-canvas drawer. */
+@media (max-width: 1024px) {
+  .layout-content {
+    margin-left: 0;
+  }
+
+  .header-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    padding: 0;
+  }
+
+  .sidebar {
+    width: min(280px, calc(100vw - 48px));
+    height: 100vh;
+    height: 100dvh;
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 18px 0 48px rgba(15, 23, 42, .2);
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(15, 23, 42, .48);
+    backdrop-filter: blur(2px);
+  }
+
+  .dashboard-stats,
+  .relatorios-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-content,
+  .aluno-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .financeiro-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .report-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .report-student-picker {
+    grid-column: span 2;
+  }
+
+  .report-preview-download {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .report-export-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-2xl: 2rem;
+    --spacing-xl: 1.5rem;
+  }
+
+  .header {
+    min-height: 60px;
+    padding: .65rem 1rem;
+  }
+
+  .header-left,
+  .header-right {
+    min-width: 0;
+    gap: .6rem;
+  }
+
+  .header-title {
+    min-width: 0;
+  }
+
+  .header-title h1 {
+    overflow: hidden;
+    font-size: clamp(1rem, 4.5vw, 1.3rem);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-theme-btn,
+  .header-logout-btn {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    padding: 0;
+  }
+
+  .dashboard,
+  .alunos-container,
+  .turmas-container,
+  .frequencia-container,
+  .relatorios-container,
+  .financeiro-page,
+  .page-container,
+  .aluno-profile-page {
+    padding: 1rem;
+  }
+
+  .dashboard-welcome,
+  .alunos-container > .alunos-header,
+  .turmas-container > .turmas-header,
+  .frequencia-container > .frequencia-header,
+  .page-container > .page-header,
+  .aluno-profile-header {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 1.15rem;
+  }
+
+  .dashboard-welcome h2,
+  .alunos-header h1,
+  .turmas-header h1,
+  .frequencia-header h1,
+  .page-header h1,
+  .aluno-profile-identity h1 {
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+  }
+
+  .dashboard-date {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .turmas-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .turma-card,
+  .dashboard-stat-card,
+  .financeiro-stat-card,
+  .relatorio-card {
+    min-width: 0;
+  }
+
+  .form-row,
+  .form-row-address,
+  .form-row-student,
+  .frequencia-filter-fields,
+  .aluno-profile-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aluno-profile-fields .profile-field-full,
+  .aluno-details-grid .details-full {
+    grid-column: auto;
+  }
+
+  .form-group,
+  .filter-group,
+  .report-filters label {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filter-group input,
+  .filter-group select,
+  .report-filters input,
+  .report-filters select {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .report-type-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .report-preview-scope {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .report-preview-numbers {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-overlay {
+    padding: .75rem;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100vh - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+  }
+
+  .modal-header,
+  .modal-content,
+  .modal-footer {
+    padding: 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: clamp(1.1rem, 5vw, 1.35rem);
+  }
+
+  .modal-actions {
+    width: 100%;
+  }
+
+  .modal-actions .btn {
+    min-height: 46px;
+    flex: 1 1 150px;
+  }
+
+  .notification-container {
+    top: 70px;
+    right: .75rem;
+    bottom: auto;
+    left: .75rem;
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-stats,
+  .relatorios-grid,
+  .financeiro-summary-grid,
+  .report-filters,
+  .report-preview-scope {
+    grid-template-columns: 1fr;
+  }
+
+  .report-student-picker {
+    grid-column: auto;
+  }
+
+  .dashboard-stat-card,
+  .relatorio-card,
+  .financeiro-stat-card {
+    min-height: auto;
+  }
+
+  .upcoming-class-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .upcoming-time {
+    grid-column: 1 / -1;
+  }
+
+  .absent-student-item,
+  .recent-activity-item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .attendance-percentages,
+  .recent-activity-item time {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .frequencia-live-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .frequencia-content-heading,
+  .report-section-title,
+  .report-preview-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .report-export-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .financeiro-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .financeiro-tabs button {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .aluno-profile-header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .aluno-profile-header > .btn {
+    width: 100%;
+  }
+
+  .aluno-profile-identity {
+    min-width: 0;
+  }
+
+  .aluno-profile-identity > div {
+    min-width: 0;
+  }
+
+  .aluno-profile-identity h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .alunos-container > .alunos-header .btn,
+  .turmas-container > .turmas-header .btn,
+  .page-container > .page-header .btn,
+  .frequencia-actions .btn {
+    width: 100%;
+  }
+
+  .aluno-actions .action-btn,
+  .turma-actions .action-btn,
+  .table-actions .action-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 375px) {
+  .dashboard,
+  .alunos-container,
+  .turmas-container,
+  .frequencia-container,
+  .relatorios-container,
+  .financeiro-page,
+  .page-container,
+  .aluno-profile-page {
+    padding: .75rem;
+  }
+
+  .card,
+  .modal-content,
+  .modal-header,
+  .modal-footer {
+    padding: .85rem;
+  }
+
+  .header {
+    padding-inline: .65rem;
+  }
+
+  .header-title h1 {
+    font-size: 1rem;
+  }
+
+  .header-menu-btn,
+  .header-theme-btn,
+  .header-logout-btn {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+
+  .sidebar {
+    width: min(270px, calc(100vw - 32px));
+  }
+
+  .stat-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .stat-arrow {
+    display: none;
+  }
+
+  .frequencia-container .alunos-header,
+  .frequencia-container .aluno-row {
+    grid-template-columns: minmax(0, 1fr) 108px;
+    gap: .5rem;
+    padding: .75rem;
+  }
+
+  .frequencia-container .presenca-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

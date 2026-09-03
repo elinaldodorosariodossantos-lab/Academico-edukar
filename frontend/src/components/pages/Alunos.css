@@ -1,0 +1,448 @@
+.alunos-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.alunos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.alunos-header h1 {
+  margin: 0;
+  color: var(--gray-900);
+}
+
+body.dark-mode .alunos-header h1 {
+  color: var(--dark-text);
+}
+
+.alunos-header p {
+  margin: var(--spacing-sm) 0 0 0;
+  color: var(--gray-500);
+}
+
+body.dark-mode .alunos-header p {
+  color: var(--gray-400);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--gray-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--gray-200);
+}
+
+body.dark-mode .search-bar {
+  background-color: var(--dark-bg);
+  border-color: var(--dark-border);
+}
+
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.9375rem;
+  color: var(--gray-900);
+}
+
+body.dark-mode .search-bar input {
+  color: var(--dark-text);
+}
+
+.search-bar input::placeholder {
+  color: var(--gray-400);
+}
+
+.search-bar input:focus {
+  outline: none;
+}
+
+.alunos-table-wrapper {
+  overflow-x: auto;
+}
+
+.alunos-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.alunos-table thead {
+  background-color: var(--gray-50);
+  border-bottom: 2px solid var(--gray-200);
+}
+
+body.dark-mode .alunos-table thead {
+  background-color: var(--dark-bg);
+  border-bottom-color: var(--dark-border);
+}
+
+.alunos-table th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+body.dark-mode .alunos-table th {
+  color: var(--dark-text);
+}
+
+.alunos-table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-900);
+  vertical-align: middle;
+}
+
+body.dark-mode .alunos-table td {
+  border-bottom-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
+.alunos-table tbody tr:hover {
+  background-color: var(--gray-50);
+}
+
+body.dark-mode .alunos-table tbody tr:hover {
+  background-color: var(--dark-bg);
+}
+
+.aluno-name {
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status-ativo {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.status-inativo {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
+.aluno-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  white-space: nowrap;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  color: var(--gray-500);
+}
+
+.action-btn:hover {
+  background-color: var(--gray-100);
+}
+
+body.dark-mode .action-btn:hover {
+  background-color: var(--dark-bg);
+}
+
+.edit-btn:hover {
+  color: var(--primary-color);
+}
+
+.view-btn:hover {
+  color: #0284c7;
+}
+
+.delete-btn:hover {
+  color: var(--danger-color);
+}
+
+.alunos-table .aluno-actions .action-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease,
+    background-color 160ms ease, color 160ms ease;
+}
+
+.alunos-table .aluno-actions .view-btn {
+  border-color: #bfdbfe;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.alunos-table .aluno-actions .edit-btn {
+  border-color: #fde68a;
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.alunos-table .aluno-actions .delete-btn {
+  border-color: #fecaca;
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.alunos-table .aluno-actions .action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+.alunos-table .aluno-actions .view-btn:hover {
+  border-color: #60a5fa;
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.alunos-table .aluno-actions .edit-btn:hover {
+  border-color: #fbbf24;
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.alunos-table .aluno-actions .delete-btn:hover {
+  border-color: #f87171;
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.alunos-table .aluno-actions .action-btn:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.22);
+  outline-offset: 2px;
+}
+
+body.dark-mode .alunos-table .aluno-actions .view-btn {
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.14);
+}
+
+body.dark-mode .alunos-table .aluno-actions .edit-btn {
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fcd34d;
+  background: rgba(217, 119, 6, 0.13);
+}
+
+body.dark-mode .alunos-table .aluno-actions .delete-btn {
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.13);
+}
+
+.aluno-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.9375rem;
+}
+
+body.dark-mode .form-group label {
+  color: var(--dark-text);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+.form-row-address {
+  grid-template-columns: 1fr 1fr 100px;
+}
+
+.form-row-student {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.responsavel-cell {
+  display: flex;
+  min-width: 180px;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.responsavel-cell strong {
+  color: var(--gray-800);
+  font-size: 0.86rem;
+}
+
+.responsavel-cell span {
+  color: var(--gray-500);
+  font-size: 0.72rem;
+}
+
+body.dark-mode .responsavel-cell strong {
+  color: var(--dark-text);
+}
+
+body.dark-mode .responsavel-cell span {
+  color: var(--gray-400);
+}
+
+.form-section-title {
+  margin: 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-800);
+  font-size: 1rem;
+}
+
+.optional-label {
+  color: var(--gray-500);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+body.dark-mode .form-section-title {
+  color: var(--dark-text);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .optional-label {
+  color: var(--gray-400);
+}
+
+.aluno-details {
+  display: grid;
+  gap: 1rem;
+}
+
+.aluno-details-section {
+  padding: 1rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--gray-50);
+}
+
+.aluno-details-section h3 {
+  margin: 0 0 1rem;
+  color: var(--gray-800);
+  font-size: 0.95rem;
+}
+
+.aluno-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+  margin: 0;
+}
+
+.aluno-details-grid div {
+  min-width: 0;
+}
+
+.aluno-details-grid .details-full {
+  grid-column: 1 / -1;
+}
+
+.aluno-details-grid dt {
+  margin-bottom: 0.3rem;
+  color: var(--gray-500);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.aluno-details-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--gray-900);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+body.dark-mode .aluno-details-section {
+  border-color: var(--dark-border);
+  background: var(--dark-bg);
+}
+
+body.dark-mode .aluno-details-section h3,
+body.dark-mode .aluno-details-grid dd {
+  color: var(--dark-text);
+}
+
+body.dark-mode .aluno-details-grid dt {
+  color: var(--gray-400);
+}
+
+@media (max-width: 768px) {
+  .alunos-container {
+    padding: var(--spacing-lg);
+    gap: var(--spacing-xl);
+  }
+
+  .alunos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-address {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-student {
+    grid-template-columns: 1fr;
+  }
+
+  .aluno-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aluno-details-grid .details-full {
+    grid-column: auto;
+  }
+
+  .alunos-table {
+    font-size: 0.875rem;
+  }
+
+  .alunos-table th,
+  .alunos-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
