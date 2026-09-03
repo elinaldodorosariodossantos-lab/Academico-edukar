@@ -13,15 +13,9 @@ import { useAlunos } from '../../hooks/useAlunos';
 import { useTurmas } from '../../hooks/useTurmas';
 
 import type { Aluno } from '../../types';
+import { formatCpf, isValidEmail, isValidOptionalCpf } from '../../lib/studentValidation';
 
 import './Alunos.css';
-
-const formatCpf = (value: string) => value
-  .replace(/\D/g, '')
-  .slice(0, 11)
-  .replace(/^(\d{3})(\d)/, '$1.$2')
-  .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-  .replace(/\.(\d{3})(\d)/, '.$1-$2');
 
 const formatPhone = (value: string) => {
   const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -98,6 +92,12 @@ export const Alunos: React.FC = () => {
   const [editingAluno, setEditingAluno] =
     useState<Aluno | null>(null);
 
+  const [touchedFields, setTouchedFields] = useState({
+    cpf: false,
+    cpfResponsavel: false,
+    email: false,
+  });
+
   const [formData, setFormData] =
     useState<Partial<Aluno>>({
       nome: '',
@@ -118,6 +118,10 @@ export const Alunos: React.FC = () => {
     });
 
   const turmaSelecionada = formData.turma ? getTurmaInfo(formData.turma) : null;
+  const cpfIsValid = isValidOptionalCpf(formData.cpf);
+  const cpfResponsavelIsValid = isValidOptionalCpf(formData.cpfResponsavel);
+  const emailIsValid = isValidEmail(formData.email || '');
+  const identificationFieldsAreValid = cpfIsValid && cpfResponsavelIsValid && emailIsValid;
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -136,7 +140,11 @@ export const Alunos: React.FC = () => {
   ) => {
     if (aluno) {
       setEditingAluno(aluno);
-      setFormData(aluno);
+      setFormData({
+        ...aluno,
+        cpf: formatCpf(aluno.cpf || ''),
+        cpfResponsavel: formatCpf(aluno.cpfResponsavel || ''),
+      });
     } else {
       setEditingAluno(null);
 
@@ -159,6 +167,7 @@ export const Alunos: React.FC = () => {
       });
     }
 
+    setTouchedFields({ cpf: false, cpfResponsavel: false, email: false });
     setIsModalOpen(true);
   };
 
@@ -173,16 +182,26 @@ export const Alunos: React.FC = () => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    if (!identificationFieldsAreValid) {
+      setTouchedFields({ cpf: true, cpfResponsavel: true, email: true });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      const normalizedFormData = {
+        ...formData,
+        email: formData.email?.trim(),
+      };
+
       if (editingAluno) {
         await updateAluno(
           editingAluno.id,
-          formData
+          normalizedFormData
         );
       } else {
         await createAluno(
-          formData as Omit<Aluno, 'id'>
+          normalizedFormData as Omit<Aluno, 'id'>
         );
         setSearchTerm('');
       }
@@ -425,6 +444,7 @@ export const Alunos: React.FC = () => {
             <Button
               onClick={handleSubmit}
               loading={isSubmitting}
+              disabled={isSubmitting || !identificationFieldsAreValid}
             >
               {isSubmitting
                 ? editingAluno
@@ -463,9 +483,10 @@ export const Alunos: React.FC = () => {
           </div>
 
           <div className="form-row form-row-student">
-            <div className="form-group">
+            <div className={`form-group ${touchedFields.cpf && !cpfIsValid ? 'has-error' : ''}`}>
               <label>CPF do Aluno <span className="optional-label">(opcional)</span></label>
-              <input type="text" inputMode="numeric" maxLength={14} placeholder="000.000.000-00" value={formData.cpf || ''} onChange={(e) => setFormData({ ...formData, cpf: formatCpf(e.target.value) })} />
+              <input type="text" inputMode="numeric" maxLength={14} placeholder="000.000.000-00" value={formData.cpf || ''} onChange={(e) => setFormData({ ...formData, cpf: formatCpf(e.target.value) })} onBlur={() => setTouchedFields((fields) => ({ ...fields, cpf: true }))} aria-invalid={touchedFields.cpf && !cpfIsValid} aria-describedby="aluno-cpf-error" />
+              {touchedFields.cpf && !cpfIsValid && <span id="aluno-cpf-error" className="field-error" role="alert">CPF inválido. Verifique os 11 dígitos.</span>}
             </div>
 
             <div className="form-group">
@@ -572,9 +593,10 @@ export const Alunos: React.FC = () => {
             />
             </div>
 
-            <div className="form-group">
+            <div className={`form-group ${touchedFields.cpfResponsavel && !cpfResponsavelIsValid ? 'has-error' : ''}`}>
               <label>CPF do Responsável <span className="optional-label">(opcional)</span></label>
-              <input type="text" inputMode="numeric" maxLength={14} placeholder="000.000.000-00" value={formData.cpfResponsavel || ''} onChange={(e) => setFormData({ ...formData, cpfResponsavel: formatCpf(e.target.value) })} />
+              <input type="text" inputMode="numeric" maxLength={14} placeholder="000.000.000-00" value={formData.cpfResponsavel || ''} onChange={(e) => setFormData({ ...formData, cpfResponsavel: formatCpf(e.target.value) })} onBlur={() => setTouchedFields((fields) => ({ ...fields, cpfResponsavel: true }))} aria-invalid={touchedFields.cpfResponsavel && !cpfResponsavelIsValid} aria-describedby="responsavel-cpf-error" />
+              {touchedFields.cpfResponsavel && !cpfResponsavelIsValid && <span id="responsavel-cpf-error" className="field-error" role="alert">CPF inválido. Verifique os 11 dígitos.</span>}
             </div>
           </div>
 
@@ -583,9 +605,10 @@ export const Alunos: React.FC = () => {
               <label>Telefone *</label>
               <input type="tel" required placeholder="(99) 99999-9999" value={formData.telefone || ''} onChange={(e) => setFormData({ ...formData, telefone: formatPhone(e.target.value) })} />
             </div>
-            <div className="form-group">
+            <div className={`form-group ${touchedFields.email && !emailIsValid ? 'has-error' : ''}`}>
               <label>E-mail *</label>
-              <input type="email" required placeholder="responsavel@email.com" value={formData.email || ''} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+              <input type="email" required placeholder="responsavel@email.com" value={formData.email || ''} onChange={(e) => setFormData({ ...formData, email: e.target.value })} onBlur={() => setTouchedFields((fields) => ({ ...fields, email: true }))} aria-invalid={touchedFields.email && !emailIsValid} aria-describedby="aluno-email-error" />
+              {touchedFields.email && !emailIsValid && <span id="aluno-email-error" className="field-error" role="alert">Informe um e-mail válido, como usuario@empresa.com.br.</span>}
             </div>
           </div>
 
