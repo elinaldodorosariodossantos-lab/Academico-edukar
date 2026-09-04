@@ -18,20 +18,35 @@
           "value": "public, max-age=0, must-revalidate"
         }
       ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
     }
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/alunos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/alunos/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/turmas",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/horarios",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/frequencia",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/relatorios",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/financeiro",
       "destination": "/index.html"
     }
   ]
