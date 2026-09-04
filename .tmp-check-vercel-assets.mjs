@@ -18,7 +18,9 @@ while (pending.length > 0) {
 
   if (assetPath.endsWith('.js') && response.ok && !isHtml) {
     for (const match of body.matchAll(/["']([^"']+\.js)["']/g)) {
-      const dependency = new URL(match[1], new URL(assetPath, base)).pathname;
+      const dependency = match[1].startsWith('assets/')
+        ? `/${match[1]}`
+        : new URL(match[1], new URL(assetPath, base)).pathname;
       if (!checked.has(dependency)) pending.push(dependency);
     }
   }
