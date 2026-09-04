@@ -84,9 +84,16 @@ body,
 body {
   background-color: var(--gray-50);
   color: var(--gray-900);
+  caret-color: transparent;
   font-size: 0.9375rem;
   line-height: 1.5;
   transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+input,
+textarea,
+[contenteditable='true'] {
+  caret-color: auto;
 }
 
 body.dark-mode {
