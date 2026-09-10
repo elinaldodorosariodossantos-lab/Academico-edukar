@@ -39,9 +39,70 @@ body.dark-mode .turmas-header p {
 }
 
 .turma-card {
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+}
+
+.turma-title-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.turma-title-button:focus-visible,
+.turma-actions button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+}
+
+.turma-card-header > div:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.turma-actions {
+  flex-shrink: 0;
+}
+
+.turma-students-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-md) 0 0;
+}
+
+.turma-students-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--gray-200);
+  overflow-wrap: anywhere;
+}
+
+.turma-students-list li > div {
+  min-width: 0;
+}
+
+.turma-students-list p {
+  margin: var(--spacing-xs) 0 0;
+}
+
+.turma-student-status {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+body.dark-mode .turma-students-list li {
+  border-color: var(--dark-border);
+  color: var(--dark-text);
 }
 
 .turma-card-header {

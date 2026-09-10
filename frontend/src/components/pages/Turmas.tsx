@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Button, Modal } from '../common';
-import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiEye } from 'react-icons/fi';
+import { useAlunos } from '../../hooks/useAlunos';
 import { useTurmas } from '../../hooks/useTurmas';
 import type { Turma } from '../../types';
 import './Turmas.css';
@@ -16,6 +17,12 @@ const DIAS_SEMANA = [
 ];
 
 export const Turmas: React.FC = () => {
+  const { alunos, isLoading: isLoadingAlunos, error: alunosError, fetchAlunos } = useAlunos();
+  const [viewingTurma, setViewingTurma] = useState<Turma | null>(null);
+  const alunosDaTurma = viewingTurma
+    ? alunos.filter((aluno) => aluno.turma.trim() === viewingTurma.nome.trim())
+        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+    : [];
   const {
     turmas,
     isLoading,
@@ -173,17 +180,39 @@ export const Turmas: React.FC = () => {
               hoverable
               padding="lg"
               className="turma-card"
+              onClick={() => setViewingTurma(turma)}
             >
               <div className="turma-card-header">
                 <div>
-                  <h3>{turma.nome}</h3>
+                  <h3>
+                    <button
+                      type="button"
+                      className="turma-title-button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setViewingTurma(turma);
+                      }}
+                      aria-label={`Ver alunos de ${turma.nome}`}
+                    >
+                      {turma.nome}
+                    </button>
+                  </h3>
 
                   <p className="text-muted">
                     {turma.professor}
                   </p>
                 </div>
 
-                <div className="turma-actions">
+                <div className="turma-actions" onClick={(event) => event.stopPropagation()}>
+                  <button
+                    type="button"
+                    className="action-btn"
+                    onClick={() => setViewingTurma(turma)}
+                    title="Ver alunos"
+                    aria-label={`Ver alunos de ${turma.nome}`}
+                  >
+                    <FiEye size={18} />
+                  </button>
                   <button
                     className="action-btn"
                     onClick={() =>
@@ -238,6 +267,40 @@ export const Turmas: React.FC = () => {
           ))
         )}
       </div>
+
+      <Modal
+        isOpen={viewingTurma !== null}
+        onClose={() => setViewingTurma(null)}
+        title={`Alunos — ${viewingTurma?.nome || ''}`}
+        size="lg"
+        footer={<Button variant="secondary" onClick={() => setViewingTurma(null)}>Fechar</Button>}
+      >
+        {isLoadingAlunos ? (
+          <p role="status">Carregando alunos...</p>
+        ) : alunosError ? (
+          <div role="alert">
+            <p>Não foi possível carregar os alunos. Tente novamente.</p>
+            <Button onClick={() => void fetchAlunos()}>Tentar novamente</Button>
+          </div>
+        ) : alunosDaTurma.length === 0 ? (
+          <p className="text-muted">Nenhum aluno cadastrado nesta turma.</p>
+        ) : (
+          <div className="turma-students">
+            <p className="text-muted">Total de alunos: {alunosDaTurma.length}</p>
+            <ul className="turma-students-list">
+              {alunosDaTurma.map((aluno) => (
+                <li key={aluno.id}>
+                  <div>
+                    <strong>{aluno.nome}</strong>
+                    <p className="text-muted">Responsável: {aluno.responsavel || 'Não informado'}</p>
+                  </div>
+                  <span className="turma-student-status">{aluno.status}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Modal>
 
       <Modal
         isOpen={isModalOpen}
