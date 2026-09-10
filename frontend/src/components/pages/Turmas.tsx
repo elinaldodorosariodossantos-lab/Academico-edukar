@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button, Modal } from '../common';
-import { FiPlus, FiEdit2, FiTrash2, FiEye } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiEye, FiSearch, FiUsers, FiX } from 'react-icons/fi';
 import { useAlunos } from '../../hooks/useAlunos';
 import { useTurmas } from '../../hooks/useTurmas';
 import type { Turma } from '../../types';
@@ -16,13 +16,22 @@ const DIAS_SEMANA = [
   'Domingo',
 ];
 
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim();
+
 export const Turmas: React.FC = () => {
   const { alunos, isLoading: isLoadingAlunos, error: alunosError, fetchAlunos } = useAlunos();
   const [viewingTurma, setViewingTurma] = useState<Turma | null>(null);
+  const [studentSearch, setStudentSearch] = useState('');
+  const openStudents = (turma: Turma) => {
+    setStudentSearch('');
+    setViewingTurma(turma);
+  };
   const alunosDaTurma = viewingTurma
     ? alunos.filter((aluno) => aluno.turma.trim() === viewingTurma.nome.trim())
         .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
     : [];
+  const filteredStudents = alunosDaTurma.filter((aluno) =>
+    normalizeSearch(`${aluno.nome} ${aluno.responsavel || ''}`).includes(normalizeSearch(studentSearch)));
   const {
     turmas,
     isLoading,
@@ -180,7 +189,7 @@ export const Turmas: React.FC = () => {
               hoverable
               padding="lg"
               className="turma-card"
-              onClick={() => setViewingTurma(turma)}
+              onClick={() => openStudents(turma)}
             >
               <div className="turma-card-header">
                 <div>
@@ -190,7 +199,7 @@ export const Turmas: React.FC = () => {
                       className="turma-title-button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setViewingTurma(turma);
+                        openStudents(turma);
                       }}
                       aria-label={`Ver alunos de ${turma.nome}`}
                     >
@@ -207,7 +216,7 @@ export const Turmas: React.FC = () => {
                   <button
                     type="button"
                     className="action-btn"
-                    onClick={() => setViewingTurma(turma)}
+                    onClick={() => openStudents(turma)}
                     title="Ver alunos"
                     aria-label={`Ver alunos de ${turma.nome}`}
                   >
@@ -286,15 +295,32 @@ export const Turmas: React.FC = () => {
           <p className="text-muted">Nenhum aluno cadastrado nesta turma.</p>
         ) : (
           <div className="turma-students">
-            <p className="text-muted">Total de alunos: {alunosDaTurma.length}</p>
+            <div className="turma-students-summary">
+              <span className="turma-students-summary-icon"><FiUsers size={24} aria-hidden="true" /></span>
+              <div><strong>{alunosDaTurma.length} {alunosDaTurma.length === 1 ? 'aluno cadastrado' : 'alunos cadastrados'}</strong><p>Conheça os alunos desta turma</p></div>
+            </div>
+            <div className="turma-students-search">
+              <FiSearch size={20} aria-hidden="true" />
+              <input
+                type="search"
+                value={studentSearch}
+                onChange={(event) => setStudentSearch(event.target.value)}
+                placeholder="Pesquisar aluno ou responsável..."
+                aria-label="Pesquisar aluno ou responsável"
+              />
+              {studentSearch && <button type="button" onClick={() => setStudentSearch('')} aria-label="Limpar pesquisa" title="Limpar pesquisa"><FiX size={18} /></button>}
+            </div>
+            <p className="turma-students-count" role="status">{studentSearch.trim() ? `${filteredStudents.length} de ${alunosDaTurma.length} alunos encontrados` : 'Alunos em ordem alfabética'}</p>
+            {filteredStudents.length === 0 && <div className="turma-students-empty"><FiSearch size={28} aria-hidden="true" /><strong>Nenhum aluno encontrado</strong><p>Tente outro nome de aluno ou responsável.</p></div>}
             <ul className="turma-students-list">
-              {alunosDaTurma.map((aluno) => (
+              {filteredStudents.map((aluno) => (
                 <li key={aluno.id}>
-                  <div>
+                  <span className="turma-student-avatar" aria-hidden="true">{aluno.nome.trim().split(/\s+/).filter((_, index, names) => index === 0 || index === names.length - 1).map((name) => name[0]).join('').toLocaleUpperCase('pt-BR')}</span>
+                  <div className="turma-student-details">
                     <strong>{aluno.nome}</strong>
                     <p className="text-muted">Responsável: {aluno.responsavel || 'Não informado'}</p>
                   </div>
-                  <span className="turma-student-status">{aluno.status}</span>
+                  <span className={`turma-student-status ${aluno.status === 'Ativo' ? 'is-active' : 'is-inactive'}`}>{aluno.status}</span>
                 </li>
               ))}
             </ul>
