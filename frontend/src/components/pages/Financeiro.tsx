@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Gastos } from './Gastos';
 import { useGastos } from '../../hooks/useGastos';
 import { resumoGastos } from '../../utils/gastos';
@@ -50,14 +50,23 @@ export const Financeiro: React.FC = () => {
   const { alunos, isLoading: loadingAlunos } = useAlunos();
   const { turmas, isLoading: loadingTurmas } = useTurmas();
   const hoje = new Date();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const abaParam = searchParams.get('aba');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { aba: abaRota } = useParams();
+  const abaParam = abaRota || new URLSearchParams(location.search).get('aba');
   const abaAtiva: FinanceiroAba = abaParam === 'cursos' || abaParam === 'mensalidades' || abaParam === 'gastos' ? abaParam : 'perfil';
-  const setAbaAtiva = (aba: FinanceiroAba) => setSearchParams(current => {
-    const next = new URLSearchParams(current);
-    next.set('aba', aba);
-    return next;
-  });
+  const setAbaAtiva = (aba: FinanceiroAba) => {
+    const params = new URLSearchParams(location.search);
+    params.delete('aba');
+    navigate({ pathname: '/financeiro/' + aba, search: params.toString(), hash: location.hash });
+  };
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has('aba') || (abaRota && !['perfil','cursos','mensalidades','gastos'].includes(abaRota))) {
+      params.delete('aba');
+      navigate({ pathname: '/financeiro/' + abaAtiva, search: params.toString(), hash: location.hash }, { replace: true });
+    }
+  }, [abaRota, abaAtiva, location.search, location.hash, navigate]);
   const [registros, setRegistros] = useState<FinanceiroAluno[]>([]);
   const [perfis, setPerfis] = useState<FinanceiroPerfil[]>([]);
   const [cursosFinanceiros, setCursosFinanceiros] = useState<FinanceiroCurso[]>([]);

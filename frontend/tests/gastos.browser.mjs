@@ -37,7 +37,7 @@ try {
     } catch (e) { await route.fulfill({ status: 400, headers, contentType: 'application/json', body: JSON.stringify({ message: e.message }) }); }
   });
   await page.goto(`${process.argv[3] || 'http://127.0.0.1:5188'}/gastos`);
-  await expect(page).toHaveURL(/\/financeiro\?aba=gastos$/);
+  await expect(page).toHaveURL(/\/financeiro\/gastos$/);
   await expect(page.getByRole('tab', { name: 'Gastos', exact: true })).toHaveAttribute('aria-selected', 'true');
   await page.getByRole('tab', { name: 'Perfil Financeiro', exact: true }).click();
   await expect(page.locator('.financeiro-summary-grid')).toBeVisible();

@@ -27,7 +27,7 @@ export const App: React.FC = () => {
 
     <Router>
       <Routes>
-        <Route path="/gastos" element={<Navigate to="/financeiro?aba=gastos" replace />} />
+        <Route path="/gastos" element={<Navigate to="/financeiro/gastos" replace />} />
 
         <Route
           path="/"
@@ -93,7 +93,7 @@ export const App: React.FC = () => {
         />
 
         <Route
-          path="/financeiro"
+          path="/financeiro/:aba?"
           element={
             <Layout title="Controle Financeiro">
               <Suspense fallback={null}><Financeiro /></Suspense>
