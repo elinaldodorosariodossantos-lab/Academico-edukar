@@ -155,6 +155,8 @@ backend/supabase/financeiro.sql
 
 ### 4. Execute o projeto
 
+Para rodar **frontend e backend no computador**, consulte [o ambiente totalmente local](LOCAL.md) e execute `npm run dev:local` após instalar Docker/WSL 2. O comando abaixo mantém o modo original, com frontend local e Supabase configurado no `.env`.
+
 ```bash
 npm run dev
 ```

@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
 } from 'react-router-dom';
 
 import { Layout } from './components/Layout';
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
 
     <Router>
       <Routes>
+        <Route path="/gastos" element={<Navigate to="/financeiro?aba=gastos" replace />} />
 
         <Route
           path="/"

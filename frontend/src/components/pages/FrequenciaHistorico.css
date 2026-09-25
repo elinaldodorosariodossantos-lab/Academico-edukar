@@ -1,0 +1,243 @@
+.frequency-records { display: grid; gap: 24px; min-width: 0; }
+.frequency-latest { background: linear-gradient(115deg, #eff6ff, var(--white)); border: 1px solid #dbeafe; }
+.frequency-latest > p { margin: 20px 0; overflow-wrap: anywhere; }
+.frequency-latest > .btn { margin-top: 20px; }
+.frequency-latest-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
+.frequency-latest-header .frequency-record-heading { margin: 0; min-width: 0; }
+.frequency-latest-header .frequency-record-heading small { text-transform: uppercase; }
+.frequencia-container .frequency-latest-edit.btn { flex: 0 0 42px; width: 42px; height: 42px; padding: 0; gap: 0; }
+.frequency-latest-class { padding: 18px 0; text-align: center; }
+.frequency-latest .frequency-latest-label { display: block; margin: 0; color: var(--gray-500); font-size: .6875rem; font-weight: 700; line-height: 1.5; letter-spacing: .09em; text-transform: uppercase; }
+.frequency-latest-class h3 { margin: 5px 0 12px; font-size: clamp(1.25rem, 2vw, 1.6rem); line-height: 1.3; font-weight: 700; color: var(--gray-900); overflow-wrap: anywhere; }
+.frequency-latest .frequency-record-totals { justify-content: center; gap: 8px; }
+.frequency-latest .frequency-record-totals .frequency-count { flex: 0 1 auto; padding: 7px 12px; gap: 6px; font-size: .8125rem; }
+.frequency-latest .frequency-record-totals strong { font-size: inherit; }
+.frequency-latest-subject { padding: 14px 0; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.frequency-latest-subject p { margin: 6px 0 0; font-size: .875rem; line-height: 1.6; overflow-wrap: anywhere; }
+.frequency-latest-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .875rem; }
+.frequency-latest-table th { padding: 12px 0 8px; color: var(--gray-500); font-size: .6875rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.frequency-latest-table td { padding: 9px 0; border-bottom: 1px solid var(--gray-200); }
+.frequency-latest-table td:first-child { padding-right: 16px; font-weight: 500; overflow-wrap: anywhere; }
+.frequency-latest-table th:last-child, .frequency-latest-table td:last-child { width: 1%; text-align: right; white-space: nowrap; }
+.frequency-latest-table tr:last-child td { border-bottom: 0; padding-bottom: 0; }
+.frequency-latest-table .frequency-count { padding: 5px 9px; gap: 6px; font-size: .75rem; border-radius: 6px; }
+.frequency-latest-table .frequency-count svg { flex-shrink: 0; width: 14px; height: 14px; }
+body.dark-mode .frequency-latest-class h3 { color: var(--dark-text); }
+body.dark-mode .frequency-latest .frequency-latest-label, body.dark-mode .frequency-latest-table th { color: #94a3b8; }
+body.dark-mode .frequency-latest-header, body.dark-mode .frequency-latest-subject, body.dark-mode .frequency-latest-table td { border-color: var(--dark-border); }
+@media (max-width: 600px) {
+  .frequency-latest-header { gap: 10px; padding-bottom: 12px; }
+  .frequency-latest-header .frequency-record-heading h2 { font-size: 1rem; }
+  .frequency-latest-class { padding: 14px 0; }
+  .frequency-latest-table { font-size: .8125rem; }
+  .frequency-latest-table td:first-child { padding-right: 8px; }
+}
+
+/* Hierarquia das ações, restrita à tela de frequência e seus modais. */
+.frequencia-container .btn {
+  min-height: 42px;
+  padding: 10px 16px;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.frequencia-container .btn .btn-icon svg { width: 17px; height: 17px; stroke-width: 1.8; }
+.frequencia-container .btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgb(37 99 235 / 14%);
+}
+.frequencia-container > .frequencia-header .btn {
+  min-height: 44px;
+  padding: 11px 20px;
+  border-radius: 9px;
+  box-shadow: 0 2px 4px rgb(37 99 235 / 14%);
+}
+.frequencia-container .btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 3px 8px rgb(37 99 235 / 20%);
+}
+.frequencia-container .btn-outline,
+.frequencia-container .btn-secondary {
+  color: #334155;
+  background: #fff;
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
+.frequencia-container .btn-outline:hover:not(:disabled),
+.frequencia-container .btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+.frequencia-container .frequency-latest > .btn-outline {
+  color: #1d4ed8;
+  background: #fff;
+  border-color: #bfdbfe;
+}
+.frequencia-container .frequency-latest > .btn-outline:hover:not(:disabled) { background: #eff6ff; border-color: #93c5fd; }
+.frequencia-container .frequency-row-actions { gap: 8px; }
+.frequencia-container .frequency-row-actions .btn { width: 38px; height: 38px; min-height: 38px; flex-shrink: 0; padding: 0; gap: 0; font-size: .8125rem; }
+.frequencia-container .frequency-row-actions .btn-danger {
+  color: #b91c1c;
+  background: #fff;
+  border-color: #fecaca;
+  box-shadow: none;
+}
+.frequencia-container .frequency-row-actions .btn-danger:hover:not(:disabled) { background: #fef2f2; border-color: #fca5a5; }
+.frequencia-container .btn:hover:not(:disabled),
+.frequencia-container .btn:active:not(:disabled) { transform: none; }
+.frequencia-container .btn:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+.frequencia-container .btn:disabled { opacity: .5; box-shadow: none; }
+.frequencia-container .btn.btn-loading { color: transparent; }
+.frequencia-container .frequency-modal-actions .btn { min-width: 112px; }
+body.dark-mode .frequencia-container .btn-outline,
+body.dark-mode .frequencia-container .btn-secondary {
+  color: #e2e8f0;
+  background: #1e293b;
+  border-color: #475569;
+}
+body.dark-mode .frequencia-container .btn-outline:hover:not(:disabled),
+body.dark-mode .frequencia-container .btn-secondary:hover:not(:disabled) { background: #334155; border-color: #64748b; }
+body.dark-mode .frequencia-container .frequency-latest > .btn-outline { color: #bfdbfe; background: #1e293b; border-color: #3b5990; }
+body.dark-mode .frequencia-container .frequency-latest > .btn-outline:hover:not(:disabled) { background: #243b5e; }
+body.dark-mode .frequencia-container .frequency-row-actions .btn-danger { color: #fca5a5; background: #291e27; border-color: #713343; }
+body.dark-mode .frequencia-container .frequency-row-actions .btn-danger:hover:not(:disabled) { background: #45202a; border-color: #a34b5e; }
+body.dark-mode .frequencia-container .btn.btn-loading { color: transparent; }
+@media (max-width: 600px) {
+  .frequencia-container .frequency-row-actions .btn { width: 44px; height: 44px; min-height: 44px; }
+  .frequencia-container .frequency-modal-actions .btn { min-height: 44px; white-space: normal; }
+  .frequencia-container .frequency-record-modal > .btn { max-width: 100%; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .frequencia-container .btn { transition: none; }
+}
+.frequency-record-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.frequency-record-heading > div { min-width: 0; overflow-wrap: anywhere; }
+.frequency-record-heading h2 { margin: 4px 0; font-size: 1.15rem; color: var(--gray-900); }
+.frequency-record-heading small { color: #2563eb; font-size: .7rem; font-weight: 700; letter-spacing: .08em; }
+.frequency-record-heading p { margin: 4px 0 0; color: var(--gray-500); }
+.frequency-record-icon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: #dbeafe; color: #2563eb; font-size: 22px; }
+.frequency-record-totals { display: flex; flex-wrap: wrap; gap: 12px; }
+.frequency-count { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 6px 12px; font-weight: 600; font-size: .875rem; }
+.frequency-count.present { background: #dcfce7; color: #166534; }
+.frequency-count.absent { background: #fee2e2; color: #991b1b; }
+.frequency-record-totals .frequency-count { padding: 12px 18px; }
+.frequency-record-totals strong { font-size: 1.5rem; }
+.frequency-history-scroll { width: 100%; overflow-x: auto; }
+.frequency-history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .875rem; }
+.frequency-history-table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; }
+.frequency-history-table th, .frequency-history-table td { padding: 14px 12px; border-bottom: 1px solid var(--gray-200); }
+.frequency-history-table td:first-child { white-space: nowrap; }
+.frequency-history-table td:nth-child(2) { min-width: 160px; overflow-wrap: anywhere; }
+.frequency-row-actions { display: flex; gap: 6px; }
+.frequency-row-actions .btn { white-space: nowrap; }
+.frequency-modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
+.frequency-record-modal fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.frequency-modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.frequency-modal-fields > div { min-width: 0; }
+.frequency-modal-fields label { display: block; margin-bottom: 8px; font-size: .875rem; font-weight: 600; }
+.frequency-modal-fields input, .frequency-modal-fields select, .frequency-modal-fields textarea, .frequency-roster select {
+  width: 100%; padding: 12px; border: 1px solid var(--gray-200); border-radius: 10px; background: var(--white); color: var(--gray-900); font: inherit;
+}
+.frequency-modal-fields textarea { resize: vertical; }
+.frequency-record-modal input:focus-visible, .frequency-record-modal select:focus-visible, .frequency-record-modal textarea:focus-visible,
+.frequency-history-scroll:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.frequency-roster-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
+.frequency-roster-heading h3 { font-size: 1rem; }
+.frequency-roster-heading span { color: var(--gray-500); font-size: .875rem; }
+.frequency-roster { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.frequency-roster li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px; border: 1px solid var(--gray-200); border-radius: 12px; background: var(--gray-50); }
+.frequency-roster li strong { min-width: 0; overflow-wrap: anywhere; font-size: .9375rem; }
+.frequency-roster select { flex-shrink: 0; width: 175px; }
+.frequency-roster .frequency-count { flex-shrink: 0; }
+.frequency-notes { margin-top: 24px; }
+.frequency-empty { padding: 24px; text-align: center; color: var(--gray-500); }
+.frequency-form-error { background: #fef2f2; color: #991b1b; padding: 14px; border: 1px solid #fecaca; border-radius: 12px; }
+
+/* Painel de chamada: controles compactos, com estados bem definidos. */
+.frequency-records .modal { border-radius: 20px; overflow: hidden; }
+.frequency-records .modal-header { padding: 20px 24px; gap: 16px; }
+.frequency-records .modal-header h2 { font-size: 1.25rem; letter-spacing: -.025em; }
+.frequency-records .modal-close-btn { width: 38px; height: 38px; padding: 8px; border: 1px solid var(--gray-200); border-radius: 10px; }
+.frequency-records .modal-close-btn:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+.frequency-records .modal-content { padding: 22px 24px; }
+.frequency-records .modal-footer { padding: 16px 24px; }
+.frequency-records .frequency-modal-actions { width: 100%; gap: 10px; }
+.frequency-records .frequency-modal-actions .btn { min-height: 44px; padding: 11px 20px; border-radius: 11px; }
+.frequency-record-modal .frequency-modal-fields { gap: 20px; }
+.frequency-record-modal .frequency-modal-fields label { font-size: .8125rem; margin-bottom: 7px; color: var(--gray-600); }
+.frequency-record-modal .frequency-modal-fields p { margin: 0; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+.frequency-record-modal .frequency-modal-fields input,
+.frequency-record-modal .frequency-modal-fields select,
+.frequency-record-modal .frequency-modal-fields textarea { border-radius: 11px; padding: 11px 13px; font-size: .875rem; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.frequency-record-modal .frequency-modal-fields textarea { line-height: 1.6; }
+.frequency-record-modal .frequency-roster-heading { margin: 22px 0 12px; flex-wrap: wrap; gap: 6px 12px; }
+.frequency-record-modal .frequency-roster-heading h3 { margin: 0; font-size: .9375rem; }
+.frequency-record-modal .frequency-roster-heading > span { font-size: .75rem; }
+.frequency-record-modal .frequency-roster { gap: 8px; }
+.frequency-record-modal .frequency-roster li { padding: 10px 14px; border-radius: 12px; gap: 12px; }
+.frequency-record-modal .frequency-roster li strong { font-weight: 600; font-size: .875rem; line-height: 1.5; }
+.frequency-record-modal .frequency-roster .frequency-status-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-600);
+  font-family: inherit;
+  width: 164px;
+  min-height: 42px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.frequency-record-modal .frequency-status-control[data-status="Presente"] { background-color: #dcfce7; color: #166534; border-color: #a7f3d0; }
+.frequency-record-modal .frequency-status-control[data-status="Falta"] { background-color: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.frequency-record-modal .frequency-status-control:hover:not(:disabled) { box-shadow: 0 2px 6px rgb(15 23 42 / 8%); }
+.frequency-record-modal .frequency-status-control:disabled { cursor: not-allowed; opacity: .6; }
+.frequency-record-modal .frequency-status-control:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+.frequency-record-modal .frequency-status-control svg { flex-shrink: 0; width: 16px; height: 16px; }
+body.dark-mode .frequency-record-modal .frequency-status-control[data-status="pending"] { background: var(--dark-bg); color: var(--dark-text); border-color: var(--dark-border); }
+.frequency-record-modal .frequency-status-control option { background: var(--white); color: var(--gray-900); }
+.frequency-record-modal .frequency-notes { padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--gray-200); }
+body.dark-mode .frequency-records .modal-close-btn,
+body.dark-mode .frequency-record-modal .frequency-notes { border-color: var(--dark-border); }
+body.dark-mode .frequency-record-modal .frequency-modal-fields label { color: #cbd5e1; }
+body.dark-mode .frequency-record-modal .frequency-roster .frequency-status-control[data-status="Presente"] { background: #153c2e; color: #86efac; border-color: #276749; }
+body.dark-mode .frequency-record-modal .frequency-roster .frequency-status-control[data-status="Falta"] { background: #45202a; color: #fca5a5; border-color: #713343; }
+body.dark-mode .frequency-record-modal .frequency-status-control option { background: var(--dark-bg); color: var(--dark-text); }
+@media (max-width: 600px) {
+  .frequency-records .modal-header, .frequency-records .modal-content { padding: 16px; }
+  .frequency-records .modal-footer { padding: 12px 16px; }
+  .frequency-record-modal .frequency-roster .frequency-status-control { width: 100%; min-height: 44px; }
+  .frequency-record-modal .frequency-modal-fields { gap: 14px; }
+}
+body.dark-mode .frequency-latest { background: linear-gradient(115deg, #172641, var(--dark-surface)); border-color: #29416b; }
+body.dark-mode .frequency-record-heading h2, body.dark-mode .frequency-record-modal { color: var(--dark-text); }
+body.dark-mode .frequency-record-icon { background: #1e3a5f; color: #93c5fd; }
+body.dark-mode .frequency-record-heading small { color: #93c5fd; }
+body.dark-mode .frequency-history-table th, body.dark-mode .frequency-roster li { background: var(--dark-bg); }
+body.dark-mode .frequency-history-table th, body.dark-mode .frequency-history-table td, body.dark-mode .frequency-roster li { border-color: var(--dark-border); color: var(--dark-text); }
+body.dark-mode .frequency-modal-fields input, body.dark-mode .frequency-modal-fields select, body.dark-mode .frequency-modal-fields textarea, body.dark-mode .frequency-roster select { background: var(--dark-bg); border-color: var(--dark-border); color: var(--dark-text); }
+body.dark-mode .frequency-count.present { background: #153c2e; color: #86efac; }
+body.dark-mode .frequency-count.absent, body.dark-mode .frequency-form-error { background: #45202a; color: #fca5a5; }
+@media (max-width: 600px) {
+  .frequency-modal-fields { grid-template-columns: 1fr; }
+  .frequency-roster li { flex-wrap: wrap; gap: 10px; }
+  .frequency-roster select { width: 100%; }
+  .frequency-record-heading { align-items: flex-start; }
+  .frequency-record-totals .frequency-count { flex: 1; justify-content: center; }
+  .frequency-modal-actions .btn { flex: 1; }
+}

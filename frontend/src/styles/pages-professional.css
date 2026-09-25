@@ -46,7 +46,6 @@
 
 .alunos-container > .alunos-header > div:first-child::before,
 .turmas-container > .turmas-header > div:first-child::before,
-.frequencia-container > .frequencia-header > div:first-child::before,
 .page-container > .page-header > div:first-child::before {
   content: 'GESTÃO ACADÊMICA';
   display: block;

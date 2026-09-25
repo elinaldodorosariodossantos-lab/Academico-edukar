@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { frequenciaRegistros } from './frequenciaRegistros';
 import type {
   Aluno,
   Turma,
@@ -672,8 +673,15 @@ export const financeiroCursoService = {
 export const frequenciaService = {
   async getAll(): Promise<Frequencia[]> {
     const client = assertSupabase();
-    const { data, error } = await client.from('frequencias').select('*').order('created_at', { ascending: false });
-    if (error) throw error;
+    const data: any[] = [];
+    const pageSize = 500;
+    for (let start = 0; ; start += pageSize) {
+      const { data: page, error } = await client.from('frequencias').select('*')
+        .order('created_at', { ascending: false }).order('id').range(start, start + pageSize - 1);
+      if (error) throw error;
+      data.push(...(page || []));
+      if (!page || page.length < pageSize) break;
+    }
     return (data || []).map((item) => ({
       id: item.id,
       data: item.data,
@@ -725,31 +733,9 @@ export const frequenciaService = {
   },
 
   async create(frequencia: Omit<Frequencia, 'id'>): Promise<Frequencia> {
-    const client = assertSupabase();
-    const payload = {
-      data: frequencia.data,
-      turma: frequencia.turma,
-      aluno: frequencia.aluno,
-      presenca: frequencia.presenca,
-      conteudo_ministrado: frequencia.conteudoMinistrado,
-      observacoes: frequencia.observacoes,
-      professor_responsavel: frequencia.professorResponsavel,
-    };
-
-    const { data, error } = await client.from('frequencias').insert(payload).select().single();
-    if (error) throw error;
-    return {
-      id: data.id,
-      data: data.data,
-      turma: data.turma,
-      aluno: data.aluno,
-      presenca: data.presenca,
-      conteudoMinistrado: data.conteudo_ministrado,
-      observacoes: data.observacoes,
-      professorResponsavel: data.professor_responsavel,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-    };
+    const [created] = await frequenciaRegistros.create([frequencia]);
+    if (!created) throw new Error('Não foi possível registrar a frequência.');
+    return created;
   },
 
   async update(id: string, frequencia: Partial<Frequencia>): Promise<Frequencia> {
@@ -786,31 +772,7 @@ export const frequenciaService = {
   },
 
   async registrarMultipla(frequenciasInput: Omit<Frequencia, 'id'>[]): Promise<Frequencia[]> {
-    const client = assertSupabase();
-    const payload = frequenciasInput.map((item) => ({
-      data: item.data,
-      turma: item.turma,
-      aluno: item.aluno,
-      presenca: item.presenca,
-      conteudo_ministrado: item.conteudoMinistrado,
-      observacoes: item.observacoes,
-      professor_responsavel: item.professorResponsavel,
-    }));
-
-    const { data, error } = await client.from('frequencias').insert(payload).select();
-    if (error) throw error;
-    return (data || []).map((item) => ({
-      id: item.id,
-      data: item.data,
-      turma: item.turma,
-      aluno: item.aluno,
-      presenca: item.presenca,
-      conteudoMinistrado: item.conteudo_ministrado,
-      observacoes: item.observacoes,
-      professorResponsavel: item.professor_responsavel,
-      createdAt: item.created_at,
-      updatedAt: item.updated_at,
-    }));
+    return frequenciaRegistros.create(frequenciasInput);
   },
 };
 

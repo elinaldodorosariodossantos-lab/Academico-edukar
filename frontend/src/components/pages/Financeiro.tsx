@@ -1,4 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Gastos } from './Gastos';
+import { useGastos } from '../../hooks/useGastos';
+import { resumoGastos } from '../../utils/gastos';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BadgeStatus, Button, Card } from '../common';
 import { useAlunos } from '../../hooks/useAlunos';
@@ -7,7 +11,17 @@ import { financeiroCursoService, financeiroPerfilService, financeiroService } fr
 import type { FinanceiroAluno, FinanceiroCurso, FinanceiroModalidade, FinanceiroPerfil, FinanceiroStatus } from '../../types';
 import './Financeiro.css';
 
-type FinanceiroAba = 'perfil' | 'cursos' | 'mensalidades';
+type FinanceiroAba = 'perfil' | 'cursos' | 'mensalidades' | 'gastos';
+
+const TotalGastosCard: React.FC<{ onOpen: () => void }> = ({ onOpen }) => {
+  const { gastos, isLoading, error } = useGastos();
+  const resumo = useMemo(() => resumoGastos(gastos), [gastos]);
+  const valor = (numero: number) => isLoading ? 'Carregando...' : error ? 'Indisponível' : numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return <Card padding="lg" className="financeiro-stat-card orange financeiro-gastos-link" role="button" tabIndex={0} aria-label="Total de Gastos — abrir aba Gastos" title="Abrir Gastos — valor pendente de pagamento" onClick={onOpen} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onOpen(); } }}>
+    <span className="financeiro-stat-label">Total de Gastos</span>
+    <strong className="financeiro-stat-value" aria-live="polite">{valor(resumo.pendente)}</strong>
+  </Card>;
+};
 
 const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
   .map((label, index) => ({ value: index + 1, label }));
@@ -36,7 +50,14 @@ export const Financeiro: React.FC = () => {
   const { alunos, isLoading: loadingAlunos } = useAlunos();
   const { turmas, isLoading: loadingTurmas } = useTurmas();
   const hoje = new Date();
-  const [abaAtiva, setAbaAtiva] = useState<FinanceiroAba>('perfil');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const abaParam = searchParams.get('aba');
+  const abaAtiva: FinanceiroAba = abaParam === 'cursos' || abaParam === 'mensalidades' || abaParam === 'gastos' ? abaParam : 'perfil';
+  const setAbaAtiva = (aba: FinanceiroAba) => setSearchParams(current => {
+    const next = new URLSearchParams(current);
+    next.set('aba', aba);
+    return next;
+  });
   const [registros, setRegistros] = useState<FinanceiroAluno[]>([]);
   const [perfis, setPerfis] = useState<FinanceiroPerfil[]>([]);
   const [cursosFinanceiros, setCursosFinanceiros] = useState<FinanceiroCurso[]>([]);
@@ -219,11 +240,11 @@ export const Financeiro: React.FC = () => {
     } finally { setSavingId(null); }
   };
 
-  if (loadingAlunos || loadingTurmas) return <div className="financeiro-loading">Carregando financeiro...</div>;
+  if (abaAtiva !== 'gastos' && (loadingAlunos || loadingTurmas)) return <div className="financeiro-loading">Carregando financeiro...</div>;
 
   return (
     <div className="financeiro-page">
-      <div className="financeiro-summary-grid">
+      {abaAtiva !== 'gastos' && <div className="financeiro-summary-grid">
         <Card padding="lg" className="financeiro-stat-card blue"><span className="financeiro-stat-label">Total de alunos</span><strong className="financeiro-stat-value">{resumo.totalAlunos}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card green"><span className="financeiro-stat-label">Total pago</span><strong className="financeiro-stat-value">{resumo.totalPagos}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card orange"><span className="financeiro-stat-label">Total pendente</span><strong className="financeiro-stat-value">{resumo.totalPendentes}</strong></Card>
@@ -231,15 +252,17 @@ export const Financeiro: React.FC = () => {
         <Card padding="lg" className="financeiro-stat-card blue-soft"><span className="financeiro-stat-label">Receita prevista</span><strong className="financeiro-stat-value">R$ {resumo.receitaPrevista.toFixed(2).replace('.', ',')}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card green-soft"><span className="financeiro-stat-label">Receita recebida</span><strong className="financeiro-stat-value">R$ {resumo.receitaRecebida.toFixed(2).replace('.', ',')}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card red-soft"><span className="financeiro-stat-label">Receita pendente</span><strong className="financeiro-stat-value">R$ {resumo.receitaPendente.toFixed(2).replace('.', ',')}</strong></Card>
-      </div>
+        <TotalGastosCard onOpen={() => setAbaAtiva('gastos')} />
+      </div>}
 
       <div className="financeiro-tabs" role="tablist" aria-label="Seções do financeiro">
         <button type="button" role="tab" aria-selected={abaAtiva === 'perfil'} className={abaAtiva === 'perfil' ? 'active' : ''} onClick={() => setAbaAtiva('perfil')}>Perfil Financeiro</button>
         <button type="button" role="tab" aria-selected={abaAtiva === 'cursos'} className={abaAtiva === 'cursos' ? 'active' : ''} onClick={() => setAbaAtiva('cursos')}>Gest. Curso</button>
         <button type="button" role="tab" aria-selected={abaAtiva === 'mensalidades'} className={abaAtiva === 'mensalidades' ? 'active' : ''} onClick={() => setAbaAtiva('mensalidades')}>Mensalidades</button>
+        <button type="button" role="tab" aria-selected={abaAtiva === 'gastos'} className={abaAtiva === 'gastos' ? 'active' : ''} onClick={() => setAbaAtiva('gastos')}>Gastos</button>
       </div>
 
-      {abaAtiva === 'perfil' ? (
+      {abaAtiva === 'gastos' ? <Gastos /> : abaAtiva === 'perfil' ? (
         <Card padding="lg" className="financeiro-table-card">
           <div className="financeiro-section-heading"><h2>Perfil Financeiro</h2><p>Defina se cada aluno paga por boleto ou participa por permuta.</p></div>
           <div className="financeiro-table-wrap"><table className="financeiro-table financeiro-profile-table">

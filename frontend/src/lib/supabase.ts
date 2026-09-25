@@ -6,7 +6,7 @@ const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim();
 export const isSupabaseConfigured = Boolean(
   supabaseUrl &&
     supabaseAnonKey &&
-    /^https:\/\//i.test(supabaseUrl)
+    (/^https:\/\//i.test(supabaseUrl) || /^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(supabaseUrl))
 );
 
 export const supabase = isSupabaseConfigured

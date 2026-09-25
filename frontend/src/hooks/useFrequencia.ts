@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { frequenciaService } from '../services/api';
+import { frequenciaRegistros } from '../services/frequenciaRegistros';
 import type { Frequencia } from '../types';
 import { useAppStore } from '../context/AppContext';
 
@@ -62,17 +63,18 @@ export const useFrequencia = () => {
   const registrarMultipla = useCallback(async (input: Omit<Frequencia, 'id'>[]) => {
     try {
       const registered = await frequenciaService.registrarMultipla(input);
-      if (!Array.isArray(registered)) {
-        addNotification('Erro ao registrar frequências', 'error');
-        return [];
+      if (!Array.isArray(registered) || registered.length !== input.length || registered.length === 0) {
+        throw new Error('Não foi possível confirmar o salvamento completo. Atualize o histórico antes de tentar novamente.');
       }
-      queryClient.setQueryData<Frequencia[]>(FREQUENCIAS_QUERY_KEY, (current = []) => [...current, ...registered]);
+      const ids = new Set(registered.map((item) => item.id));
+      queryClient.setQueryData<Frequencia[]>(FREQUENCIAS_QUERY_KEY, (current = []) => [...current.filter((item) => !ids.has(item.id)), ...registered]);
+      void queryClient.invalidateQueries({ queryKey: FREQUENCIAS_QUERY_KEY });
       addNotification('Frequências registradas com sucesso!', 'success');
       return registered;
     } catch (error) {
       addNotification(error instanceof Error ? error.message : 'Erro ao registrar frequências', 'error');
       console.error('Erro registrarMultipla:', error);
-      return [];
+      throw error;
     }
   }, [addNotification, queryClient]);
 
@@ -89,7 +91,38 @@ export const useFrequencia = () => {
     }
   }, [addNotification, queryClient]);
 
+  const updateRegistro = useCallback(async (original: Frequencia[], data: string, statuses: Record<string, Frequencia['presenca']>, details: Partial<Pick<Frequencia, 'conteudoMinistrado' | 'observacoes'>> = {}) => {
+    try {
+      const updated = await frequenciaRegistros.update(original, data, statuses, details);
+      const ids = new Set(original.map((item) => item.id));
+      if (updated.length !== original.length || new Set(updated.map((item) => item.id)).size !== ids.size || updated.some((item) => !ids.has(item.id))) {
+        throw new Error('Não foi possível confirmar a atualização completa. Atualize o histórico antes de tentar novamente.');
+      }
+      queryClient.setQueryData<Frequencia[]>(FREQUENCIAS_QUERY_KEY, (current = []) => [...current.filter((item) => !ids.has(item.id)), ...updated]);
+      void queryClient.invalidateQueries({ queryKey: FREQUENCIAS_QUERY_KEY });
+      addNotification('Frequência atualizada com sucesso!', 'success');
+    } catch (error) {
+      addNotification(error instanceof Error ? error.message : 'Erro ao atualizar frequência', 'error');
+      throw error;
+    }
+  }, [addNotification, queryClient]);
+
+  const deleteRegistro = useCallback(async (original: Frequencia[]) => {
+    try {
+      await frequenciaRegistros.remove(original);
+      const ids = new Set(original.map((item) => item.id));
+      queryClient.setQueryData<Frequencia[]>(FREQUENCIAS_QUERY_KEY, (current = []) => current.filter((item) => !ids.has(item.id)));
+      void queryClient.invalidateQueries({ queryKey: FREQUENCIAS_QUERY_KEY });
+      addNotification('Frequência excluída com sucesso!', 'success');
+    } catch (error) {
+      addNotification(error instanceof Error ? error.message : 'Erro ao excluir frequência', 'error');
+      throw error;
+    }
+  }, [addNotification, queryClient]);
+
   return {
+    updateRegistro,
+    deleteRegistro,
     frequencias: query.data ?? [],
     isLoading: query.isLoading,
     error: query.error instanceof Error ? query.error.message : null,

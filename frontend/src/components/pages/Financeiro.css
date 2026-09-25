@@ -7,6 +7,8 @@
 
 .financeiro-tabs {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   gap: 0.5rem;
   padding: 0.35rem;
   border: 1px solid #dbe3ee;
@@ -186,6 +188,8 @@
   margin-top: 0.5rem;
   border-top: 1px solid #e5e7eb;
 }
+
+.financeiro-page > .gastos-page { padding: 0; }
 
 .financeiro-course-value-field {
   display: grid;
@@ -390,3 +394,7 @@ body.dark-mode .financeiro-course-value-prefix {
     grid-template-columns: 1fr;
   }
 }
+
+
+.financeiro-gastos-link { cursor: pointer; }
+.financeiro-gastos-link:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }

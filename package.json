@@ -7,8 +7,14 @@
   },
   "scripts": {
     "dev": "npm --prefix frontend run dev",
+    "dev:teste": "node scripts/dev-testing.mjs",
+    "dev:local": "node scripts/dev-local.mjs",
+    "local:stop": "supabase stop --workdir backend",
     "build": "npm --prefix frontend run build",
     "preview": "npm --prefix frontend run preview",
     "install:frontend": "npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "supabase": "2.117.0"
   }
 }
