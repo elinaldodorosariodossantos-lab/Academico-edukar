@@ -1,6 +1,6 @@
 # Gastos
 
-Aba **Gastos** dentro de **Financeiro**, acessível em `/financeiro?aba=gastos`. O endereço antigo `/gastos` redireciona para essa aba. Não utiliza nem modifica as tabelas, cálculos ou relatórios de mensalidades.
+Aba **Gastos** dentro de **Financeiro**, acessível em `/financeiro/gastos`. O endereço antigo `/gastos` redireciona para essa aba. Não utiliza nem modifica as tabelas, cálculos ou relatórios de mensalidades.
 
 ## Instalação
 
@@ -47,3 +47,5 @@ Teste de recorrência: node backend/supabase/tests/gastos-recorrentes.test.mjs <
 ## Exportação de gastos
 
 O botão Baixar relatório de gastos abre a escolha de período mensal (mês e ano) ou geral, e formato Excel (.xlsx) ou PDF. A exportação consulta todos os gastos atualizados e aplica somente o período escolhido, independentemente dos filtros da tabela. Inclui descrição, categoria, valor, data, status, recorrência e resumo pago/pendente/total. Períodos vazios exibem uma mensagem, sem baixar arquivo. Não requer migração nem altera relatórios existentes.
+
+As abas financeiras usam /financeiro/perfil, /financeiro/cursos, /financeiro/mensalidades e /financeiro/gastos. Links antigos com ?aba= continuam funcionando e são atualizados para a rota correspondente.
