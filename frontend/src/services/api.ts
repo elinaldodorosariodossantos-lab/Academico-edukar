@@ -11,9 +11,6 @@ import type {
   FinanceiroAluno,
   BoletoEmitido,
   FinanceiroStatus,
-  FinanceiroPerfil,
-  FinanceiroModalidade,
-  FinanceiroCurso,
 } from '../types';
 
 const normalizeStringArray = (value: unknown): string[] => {
@@ -102,24 +99,6 @@ const normalizeFinanceiroStatus = (value: unknown): FinanceiroStatus => {
     ? status
     : 'Pendente';
 };
-
-const normalizeFinanceiroPerfil = (item: any): FinanceiroPerfil => ({
-  id: item?.id ?? undefined,
-  alunoId: item?.aluno_id ?? item?.alunoId ?? '',
-  modalidade: (item?.modalidade === 'Permuta' ? 'Permuta' : 'Boleto') as FinanceiroModalidade,
-  valorMensalidade: item?.valor_mensalidade == null ? undefined : Number(item.valor_mensalidade),
-  createdAt: item?.created_at,
-  updatedAt: item?.updated_at,
-});
-
-const normalizeFinanceiroCurso = (item: any): FinanceiroCurso => ({
-  id: item?.id ?? undefined,
-  turmaId: item?.turma_id ?? item?.turmaId ?? '',
-  turmaNome: item?.turma_nome ?? item?.turmaNome ?? '',
-  valorMensalidade: Number(item?.valor_mensalidade ?? item?.valorMensalidade ?? 0),
-  createdAt: item?.created_at,
-  updatedAt: item?.updated_at,
-});
 
 const normalizeFinanceiroAluno = (item: any): FinanceiroAluno => ({
   id: item?.id ?? item?.ID ?? undefined,
@@ -594,85 +573,6 @@ export const financeiroService = {
     const client = assertSupabase();
     const { error } = await client.from('financeiro_alunos').delete().eq('id', id);
     if (error) throw error;
-  },
-};
-
-export const financeiroPerfilService = {
-  async getAll(): Promise<FinanceiroPerfil[]> {
-    const client = assertSupabase();
-    try {
-      const { data, error } = await client
-        .from('financeiro_perfis')
-        .select('*');
-
-      if (error) throw error;
-      return (data || []).map(normalizeFinanceiroPerfil);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (isBackendUnavailableError(error) || /financeiro_perfis|does not exist/i.test(message)) return [];
-      throw error;
-    }
-  },
-
-  async upsert(alunoId: string, modalidade: FinanceiroModalidade): Promise<FinanceiroPerfil> {
-    const client = assertSupabase();
-    const { data, error } = await client
-      .from('financeiro_perfis')
-      .upsert(
-        { aluno_id: alunoId, modalidade },
-        { onConflict: 'aluno_id' }
-      )
-      .select()
-      .single();
-
-    if (error) throw error;
-    return normalizeFinanceiroPerfil(data);
-  },
-
-  async upsertMany(perfis: Array<Pick<FinanceiroPerfil, 'alunoId' | 'modalidade' | 'valorMensalidade'>>): Promise<FinanceiroPerfil[]> {
-    const client = assertSupabase();
-    if (perfis.length === 0) return [];
-
-    const payload = perfis.map((perfil) => ({
-      aluno_id: perfil.alunoId,
-      modalidade: perfil.modalidade,
-      ...(perfil.valorMensalidade === undefined ? {} : { valor_mensalidade: perfil.valorMensalidade }),
-    }));
-    const { data, error } = await client
-      .from('financeiro_perfis')
-      .upsert(payload, { onConflict: 'aluno_id' })
-      .select();
-
-    if (error) throw error;
-    return (data || []).map(normalizeFinanceiroPerfil);
-  },
-};
-
-export const financeiroCursoService = {
-  async getAll(): Promise<FinanceiroCurso[]> {
-    const client = assertSupabase();
-    try {
-      const { data, error } = await client.from('financeiro_cursos').select('*').order('turma_nome');
-      if (error) throw error;
-      return (data || []).map(normalizeFinanceiroCurso);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (isBackendUnavailableError(error) || /financeiro_cursos|does not exist/i.test(message)) return [];
-      throw error;
-    }
-  },
-
-  async upsertMany(cursos: Array<Omit<FinanceiroCurso, 'id' | 'createdAt' | 'updatedAt'>>): Promise<FinanceiroCurso[]> {
-    const client = assertSupabase();
-    if (cursos.length === 0) return [];
-    const payload = cursos.map((curso) => ({
-      turma_id: curso.turmaId,
-      turma_nome: curso.turmaNome,
-      valor_mensalidade: Number(curso.valorMensalidade || 0),
-    }));
-    const { data, error } = await client.from('financeiro_cursos').upsert(payload, { onConflict: 'turma_id' }).select();
-    if (error) throw error;
-    return (data || []).map(normalizeFinanceiroCurso);
   },
 };
 

@@ -342,8 +342,6 @@
 .financeiro-tabs button.active { box-shadow: 0 6px 15px rgba(37,99,235,.18); }
 .financeiro-filters { gap: .85rem; }
 .financeiro-filters select, .financeiro-table input, .financeiro-table select { min-height: 42px; border-radius: 10px; background: #f8fafc; }
-.financeiro-modalidade-option { border-radius: 10px; transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease; }
-.financeiro-modalidade-option:hover { transform: translateY(-1px); }
 
 body.dark-mode .alunos-container > .alunos-header,
 body.dark-mode .turmas-container > .turmas-header,

@@ -153,24 +153,6 @@ export type BoletoEmitido = 'Sim' | 'Não';
 export type FinanceiroStatus = 'Pago' | 'Permuta' | 'Pendente';
 export type FinanceiroModalidade = 'Boleto' | 'Permuta';
 
-export interface FinanceiroPerfil {
-  id?: string;
-  alunoId: string;
-  modalidade: FinanceiroModalidade;
-  valorMensalidade?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface FinanceiroCurso {
-  id?: string;
-  turmaId: string;
-  turmaNome: string;
-  valorMensalidade: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export interface FinanceiroAluno {
   id?: string;
   alunoId: string;

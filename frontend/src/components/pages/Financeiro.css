@@ -185,107 +185,7 @@
   min-width: 980px;
 }
 
-.financeiro-profile-table {
-  min-width: 720px;
-}
-
-.financeiro-profile-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 1.25rem;
-  margin-top: 0.5rem;
-  border-top: 1px solid #e5e7eb;
-}
-
 .financeiro-page > .gastos-page { padding: 0; }
-
-.financeiro-course-value-field {
-  display: grid;
-  grid-template-columns: auto minmax(110px, 1fr) auto;
-  align-items: center;
-  width: min(100%, 280px);
-  min-height: 48px;
-  overflow: hidden;
-  border: 1px solid #dbe3ee;
-  border-radius: 0.85rem;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.financeiro-course-value-field:focus-within {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1), 0 8px 20px rgba(15, 23, 42, 0.08);
-  transform: translateY(-1px);
-}
-
-.financeiro-course-value-prefix {
-  align-self: stretch;
-  display: flex;
-  align-items: center;
-  padding: 0 0.8rem;
-  color: #1d4ed8;
-  background: #eff6ff;
-  border-right: 1px solid #dbeafe;
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.financeiro-course-value-field input {
-  width: 100%;
-  min-height: 46px;
-  padding: 0 0.75rem;
-  border: 0;
-  border-radius: 0;
-  outline: 0;
-  background: transparent;
-  color: #0f172a;
-  font-size: 1rem;
-  font-weight: 700;
-  text-align: right;
-  box-shadow: none;
-}
-
-.financeiro-course-value-field input:focus {
-  border: 0;
-  box-shadow: none;
-}
-
-.financeiro-course-value-period {
-  padding-right: 0.8rem;
-  color: #94a3b8;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.financeiro-modalidade-options {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-}
-
-.financeiro-modalidade-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  color: #334155;
-  font-weight: 600;
-}
-
-.financeiro-modalidade-option input[type='radio'] {
-  width: 1.1rem;
-  height: 1.1rem;
-  min-height: 1.1rem;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  accent-color: #2563eb;
-}
-
-.financeiro-modalidade-option:has(input:checked) {
-  color: #1d4ed8;
-}
 
 .financeiro-table th,
 .financeiro-table td {
@@ -328,8 +228,7 @@
   color: #64748b;
 }
 
-body.dark-mode .financeiro-tabs,
-body.dark-mode .financeiro-course-value-field {
+body.dark-mode .financeiro-tabs {
   background: var(--dark-bg);
   border-color: var(--dark-border);
 }
@@ -339,8 +238,7 @@ body.dark-mode .financeiro-section-heading p,
 body.dark-mode .financeiro-stat-label,
 body.dark-mode .financeiro-curso-cell small,
 body.dark-mode .financeiro-empty-row,
-body.dark-mode .financeiro-loading,
-body.dark-mode .financeiro-course-value-period {
+body.dark-mode .financeiro-loading {
   color: #94a3b8;
 }
 
@@ -352,14 +250,8 @@ body.dark-mode .financeiro-tabs button.active {
 body.dark-mode .financeiro-section-heading h2,
 body.dark-mode .financeiro-stat-value,
 body.dark-mode .financeiro-filters label,
-body.dark-mode .financeiro-modalidade-option,
-body.dark-mode .financeiro-table td,
-body.dark-mode .financeiro-course-value-field input {
+body.dark-mode .financeiro-table td {
   color: var(--dark-text);
-}
-
-body.dark-mode .financeiro-modalidade-option:has(input:checked) {
-  color: #60a5fa;
 }
 
 body.dark-mode .financeiro-table th {
@@ -368,8 +260,7 @@ body.dark-mode .financeiro-table th {
 }
 
 body.dark-mode .financeiro-table th,
-body.dark-mode .financeiro-table td,
-body.dark-mode .financeiro-profile-actions {
+body.dark-mode .financeiro-table td {
   border-color: var(--dark-border);
 }
 
@@ -383,12 +274,6 @@ body.dark-mode .financeiro-table select {
 
 body.dark-mode .financeiro-value-input {
   background: var(--dark-bg);
-}
-
-body.dark-mode .financeiro-course-value-prefix {
-  color: #93c5fd;
-  background: rgba(37, 99, 235, 0.18);
-  border-color: rgba(59, 130, 246, 0.25);
 }
 
 @media (max-width: 768px) {
