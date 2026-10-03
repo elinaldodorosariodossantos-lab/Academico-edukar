@@ -1,25 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Gastos } from './Gastos';
 import { useGastos } from '../../hooks/useGastos';
-import { resumoGastos } from '../../utils/gastos';
+import { resumoCaixa } from '../../utils/caixa';
+import { periodoFinanceiroPermitido, periodoGastosPermitido } from '../../utils/periodoFinanceiro';
+import { mensagemErroFinanceiro } from '../../utils/erroFinanceiro';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BadgeStatus, Button, Card } from '../common';
 import { useAlunos } from '../../hooks/useAlunos';
 import { useTurmas } from '../../hooks/useTurmas';
-import { financeiroCursoService, financeiroPerfilService, financeiroService } from '../../services/api';
-import type { FinanceiroAluno, FinanceiroCurso, FinanceiroModalidade, FinanceiroPerfil, FinanceiroStatus } from '../../types';
+import { financeiroService } from '../../services/api';
+import type { FinanceiroAluno, FinanceiroModalidade, FinanceiroStatus } from '../../types';
 import './Financeiro.css';
 
-type FinanceiroAba = 'perfil' | 'cursos' | 'mensalidades' | 'gastos';
+type FinanceiroAba = 'mensalidades' | 'gastos';
 
-const TotalGastosCard: React.FC<{ onOpen: () => void }> = ({ onOpen }) => {
-  const { gastos, isLoading, error } = useGastos();
-  const resumo = useMemo(() => resumoGastos(gastos), [gastos]);
-  const valor = (numero: number) => isLoading ? 'Carregando...' : error ? 'Indisponível' : numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  return <Card padding="lg" className="financeiro-stat-card orange financeiro-gastos-link" role="button" tabIndex={0} aria-label="Total de Gastos — abrir aba Gastos" title="Abrir Gastos — valor pendente de pagamento" onClick={onOpen} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onOpen(); } }}>
+const TotalGastosCard: React.FC<{ onOpen: () => void; valor: string }> = ({ onOpen, valor }) => {
+  return <Card padding="lg" className="financeiro-stat-card orange financeiro-gastos-link" role="button" tabIndex={0} aria-label="Total de Gastos — abrir aba Gastos" title="Abrir Gastos — total de despesas pagas e pendentes" onClick={onOpen} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onOpen(); } }}>
     <span className="financeiro-stat-label">Total de Gastos</span>
-    <strong className="financeiro-stat-value" aria-live="polite">{valor(resumo.pendente)}</strong>
+    <strong className="financeiro-stat-value" aria-live="polite">{valor}</strong>
   </Card>;
 };
 
@@ -27,10 +26,7 @@ const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julh
   .map((label, index) => ({ value: index + 1, label }));
 const anos = Array.from({ length: 6 }, (_, index) => new Date().getFullYear() - 2 + index);
 const statusOptions: FinanceiroStatus[] = ['Pago', 'Permuta', 'Pendente'];
-const modalidadeOptions: FinanceiroModalidade[] = ['Boleto', 'Permuta'];
 const FINANCEIRO_QUERY_KEY = ['financeiro', 'mensalidades'] as const;
-const FINANCEIRO_PERFIS_QUERY_KEY = ['financeiro', 'perfis'] as const;
-const FINANCEIRO_CURSOS_QUERY_KEY = ['financeiro', 'cursos'] as const;
 
 const getDefaultRow = (aluno: any, mes: number, ano: number, modalidade: FinanceiroModalidade, valorMensalidade = 0): FinanceiroAluno => ({
   alunoId: aluno.id,
@@ -38,6 +34,7 @@ const getDefaultRow = (aluno: any, mes: number, ano: number, modalidade: Finance
   curso: aluno.turma || 'Sem curso',
   turma: aluno.turma || 'Sem turma',
   valorMensalidade,
+  modalidade,
   mesReferencia: mes,
   anoReferencia: ano,
   boletoEmitido: 'Não',
@@ -47,77 +44,88 @@ const getDefaultRow = (aluno: any, mes: number, ano: number, modalidade: Finance
 
 export const Financeiro: React.FC = () => {
   const queryClient = useQueryClient();
-  const { alunos, isLoading: loadingAlunos } = useAlunos();
+  const { alunos, isLoading: loadingAlunos, updateAluno } = useAlunos();
   const { turmas, isLoading: loadingTurmas } = useTurmas();
   const hoje = new Date();
   const location = useLocation();
   const navigate = useNavigate();
   const { aba: abaRota } = useParams();
   const abaParam = abaRota || new URLSearchParams(location.search).get('aba');
-  const abaAtiva: FinanceiroAba = abaParam === 'cursos' || abaParam === 'mensalidades' || abaParam === 'gastos' ? abaParam : 'perfil';
+  const abaAtiva: FinanceiroAba = abaParam === 'gastos' ? 'gastos' : 'mensalidades';
+  const conteudoAbaRef = useRef<HTMLDivElement>(null);
+  const [solicitacaoRolagem, setSolicitacaoRolagem] = useState(0);
+  useEffect(() => {
+    if (!solicitacaoRolagem) return;
+    const frame = requestAnimationFrame(() => conteudoAbaRef.current?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'start',
+    }));
+    return () => cancelAnimationFrame(frame);
+  }, [abaAtiva, solicitacaoRolagem]);
+  const gastosQuery = useGastos(abaAtiva !== 'gastos');
   const setAbaAtiva = (aba: FinanceiroAba) => {
+    setSolicitacaoRolagem(prev => prev + 1);
     const params = new URLSearchParams(location.search);
     params.delete('aba');
     navigate({ pathname: '/financeiro/' + aba, search: params.toString(), hash: location.hash });
   };
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.has('aba') || (abaRota && !['perfil','cursos','mensalidades','gastos'].includes(abaRota))) {
+    if (params.has('aba') || (abaRota && !['mensalidades','gastos'].includes(abaRota))) {
       params.delete('aba');
       navigate({ pathname: '/financeiro/' + abaAtiva, search: params.toString(), hash: location.hash }, { replace: true });
     }
   }, [abaRota, abaAtiva, location.search, location.hash, navigate]);
   const [registros, setRegistros] = useState<FinanceiroAluno[]>([]);
-  const [perfis, setPerfis] = useState<FinanceiroPerfil[]>([]);
-  const [cursosFinanceiros, setCursosFinanceiros] = useState<FinanceiroCurso[]>([]);
   const [mesFiltro, setMesFiltro] = useState(hoje.getMonth() + 1);
   const [anoFiltro, setAnoFiltro] = useState(hoje.getFullYear());
+  const periodoPermitido = periodoFinanceiroPermitido(mesFiltro, anoFiltro);
+  const gastosPermitidos = periodoGastosPermitido(mesFiltro, anoFiltro);
   const [cursoFiltro, setCursoFiltro] = useState('Todos');
   const [statusFiltro, setStatusFiltro] = useState<'Todos' | FinanceiroStatus>('Todos');
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [savingPerfis, setSavingPerfis] = useState(false);
-  const [savingCursos, setSavingCursos] = useState(false);
-  const registrosQuery = useQuery({ queryKey: FINANCEIRO_QUERY_KEY, queryFn: () => financeiroService.getAll() });
-  const perfisQuery = useQuery({ queryKey: FINANCEIRO_PERFIS_QUERY_KEY, queryFn: () => financeiroPerfilService.getAll() });
-  const cursosQuery = useQuery({ queryKey: FINANCEIRO_CURSOS_QUERY_KEY, queryFn: () => financeiroCursoService.getAll() });
+  const [erroFinanceiro, setErroFinanceiro] = useState('');
+  const [rascunhos, setRascunhos] = useState<Record<string, Partial<FinanceiroAluno>>>({});
+  const [valoresEditados, setValoresEditados] = useState<Record<string, string>>({});
+  const periodoAtual = mesFiltro === hoje.getMonth() + 1 && anoFiltro === hoje.getFullYear();
+  const chaveLinha = (alunoId: string) => `${alunoId}-${mesFiltro}-${anoFiltro}`;
+  const registrosQuery = useQuery({ queryKey: FINANCEIRO_QUERY_KEY, queryFn: async () => {
+    try { await financeiroService.gerarMensalidades(); setErroFinanceiro(''); }
+    catch (error) { setErroFinanceiro(mensagemErroFinanceiro(error)); }
+    return financeiroService.getAll();
+  }, refetchInterval: 60000 });
+  const caixa = useMemo(() => resumoCaixa((registrosQuery.data ?? []).filter(registro =>
+    periodoPermitido && registro.mesReferencia === mesFiltro && registro.anoReferencia === anoFiltro &&
+    (cursoFiltro === 'Todos' || registro.curso === cursoFiltro)
+  ), gastosPermitidos ? gastosQuery.gastos : []), [registrosQuery.data, gastosQuery.gastos, mesFiltro, anoFiltro, cursoFiltro, periodoPermitido, gastosPermitidos]);
+  const moeda = (valor: number) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const valorGastos = (valor: number) => !gastosPermitidos ? moeda(0) : gastosQuery.isLoading ? 'Carregando...' : gastosQuery.error ? 'Indisponível' : moeda(valor);
+  const valorCaixa = (valor: number) => !periodoPermitido ? moeda(0) : registrosQuery.isLoading || (gastosPermitidos && gastosQuery.isLoading) ? 'Carregando...' : registrosQuery.error || (gastosPermitidos && gastosQuery.error) ? 'Indisponível' : moeda(valor);
 
   useEffect(() => {
     if (registrosQuery.data) setRegistros(registrosQuery.data);
   }, [registrosQuery.data]);
 
-  useEffect(() => {
-    if (perfisQuery.data) setPerfis(perfisQuery.data);
-  }, [perfisQuery.data]);
-
-  useEffect(() => {
-    if (cursosQuery.data) setCursosFinanceiros(cursosQuery.data);
-  }, [cursosQuery.data]);
-
   const alunosAtivos = useMemo(() => [...alunos]
     .filter((aluno) => aluno.status === 'Ativo')
     .sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR')), [alunos]);
-  const modalidadesPorAluno = useMemo(() => new Map(perfis.map((perfil) => [perfil.alunoId, perfil.modalidade])), [perfis]);
-  const mensalidadesPorTurma = useMemo(() => new Map(cursosFinanceiros.map((curso) => [curso.turmaNome, curso.valorMensalidade])), [cursosFinanceiros]);
   const cursosDisponiveis = useMemo(() => Array.from(new Set(
     [...turmas.map((turma) => turma.nome), ...alunosAtivos.map((aluno) => aluno.turma)].filter(Boolean)
   )).sort((a, b) => a.localeCompare(b, 'pt-BR')), [alunosAtivos, turmas]);
 
   const alunosFinanceiros = useMemo(() => {
+    if (!periodoPermitido) return [];
     const doPeriodo = new Map(registros
       .filter((item) => item.mesReferencia === mesFiltro && item.anoReferencia === anoFiltro)
       .map((item) => [item.alunoId, item]));
-    return alunosAtivos.map((aluno) => {
-      const modalidade = modalidadesPorAluno.get(aluno.id) ?? 'Boleto';
-      const salvo = doPeriodo.get(aluno.id);
-      const registro = salvo ?? getDefaultRow(aluno, mesFiltro, anoFiltro, modalidade, mensalidadesPorTurma.get(aluno.turma) ?? 0);
-      return {
-        ...registro,
-        alunoNome: aluno.nome,
-        curso: aluno.turma || 'Sem curso',
-        turma: aluno.turma || 'Sem turma',
-      };
+    const linhas = alunosAtivos.map(aluno => {
+      const registro = doPeriodo.get(aluno.id) ?? getDefaultRow(aluno, mesFiltro, anoFiltro, aluno.mensalidadePermuta ? 'Permuta' : 'Boleto', aluno.mensalidade ?? 0);
+      return { ...registro, ...rascunhos[chaveLinha(aluno.id)] };
     });
-  }, [alunosAtivos, anoFiltro, mensalidadesPorTurma, mesFiltro, modalidadesPorAluno, registros]);
+    const ids = new Set(linhas.map(linha => linha.alunoId));
+    return [...linhas, ...[...doPeriodo.values()].filter(linha => !ids.has(linha.alunoId))]
+      .sort((a, b) => a.alunoNome.localeCompare(b.alunoNome, 'pt-BR'));
+  }, [alunosAtivos, anoFiltro, mesFiltro, registros, rascunhos, periodoPermitido]);
 
   const linhasFiltradas = useMemo(() => alunosFinanceiros.filter((linha) =>
     (cursoFiltro === 'Todos' || linha.curso === cursoFiltro) &&
@@ -132,202 +140,79 @@ export const Financeiro: React.FC = () => {
       totalPendentes: base.filter((item) => item.statusPagamento === 'Pendente').length,
       totalPermutas: base.filter((item) => item.statusPagamento === 'Permuta').length,
       receitaPrevista: base.reduce((total, item) => total + Number(item.valorMensalidade || 0), 0),
-      receitaRecebida: base.filter((item) => item.statusPagamento === 'Pago').reduce((total, item) => total + Number(item.valorMensalidade || 0), 0),
       receitaPendente: base.filter((item) => item.statusPagamento === 'Pendente').reduce((total, item) => total + Number(item.valorMensalidade || 0), 0),
     };
   }, [alunosFinanceiros, linhasFiltradas]);
 
-  const handleModalidadeChange = (alunoId: string, modalidade: FinanceiroModalidade) => {
-    setPerfis((prev) => prev.some((perfil) => perfil.alunoId === alunoId)
-      ? prev.map((perfil) => perfil.alunoId === alunoId ? { ...perfil, modalidade } : perfil)
-      : [...prev, { alunoId, modalidade }]);
-    setRegistros((prev) => prev.map((registro) =>
-      registro.alunoId === alunoId && registro.mesReferencia === mesFiltro && registro.anoReferencia === anoFiltro
-        ? { ...registro, statusPagamento: modalidade === 'Permuta' ? 'Permuta' : 'Pendente' }
-        : registro));
-  };
-
-  const handleSalvarPerfis = async () => {
-    setSavingPerfis(true);
-    try {
-      const configuracoes = alunosAtivos.map((aluno) => ({
-        alunoId: aluno.id,
-        modalidade: modalidadesPorAluno.get(aluno.id) ?? 'Boleto' as FinanceiroModalidade,
-      }));
-      const perfisSalvos = await financeiroPerfilService.upsertMany(configuracoes);
-      const registrosDoPeriodo = new Map(
-        registros
-          .filter((item) => item.mesReferencia === mesFiltro && item.anoReferencia === anoFiltro)
-          .map((item) => [item.alunoId, item])
-      );
-      const mensalidadesSalvas = await Promise.all(alunosAtivos.map((aluno) => {
-        const modalidade = modalidadesPorAluno.get(aluno.id) ?? 'Boleto';
-        const existente = registrosDoPeriodo.get(aluno.id);
-        const valorCurso = mensalidadesPorTurma.get(aluno.turma) ?? 0;
-        const linha = existente ?? getDefaultRow(aluno, mesFiltro, anoFiltro, modalidade, valorCurso);
-        const statusPagamento: FinanceiroStatus = modalidade === 'Permuta'
-          ? 'Permuta'
-          : linha.statusPagamento === 'Permuta' ? 'Pendente' : linha.statusPagamento;
-
-        return financeiroService.upsert({
-          ...linha,
-          alunoId: aluno.id,
-          alunoNome: aluno.nome,
-          curso: aluno.turma || 'Sem curso',
-          turma: aluno.turma || 'Sem turma',
-          mesReferencia: mesFiltro,
-          anoReferencia: anoFiltro,
-          boletoEmitido: 'Não',
-          valorMensalidade: valorCurso,
-          statusPagamento,
-        });
-      }));
-
-      setPerfis(perfisSalvos);
-      setRegistros((prev) => [
-        ...mensalidadesSalvas,
-        ...prev.filter((item) => item.mesReferencia !== mesFiltro || item.anoReferencia !== anoFiltro),
-      ]);
-      queryClient.setQueryData(FINANCEIRO_PERFIS_QUERY_KEY, perfisSalvos);
-      queryClient.setQueryData<FinanceiroAluno[]>(FINANCEIRO_QUERY_KEY, (current = []) => [
-        ...mensalidadesSalvas,
-        ...current.filter((item) => item.mesReferencia !== mesFiltro || item.anoReferencia !== anoFiltro),
-      ]);
-      setAbaAtiva('mensalidades');
-    } finally { setSavingPerfis(false); }
-  };
-
-  const handleCursoValueChange = (turmaId: string, turmaNome: string, valor: number) => {
-    setCursosFinanceiros((prev) => prev.some((curso) => curso.turmaId === turmaId)
-      ? prev.map((curso) => curso.turmaId === turmaId ? { ...curso, turmaNome, valorMensalidade: valor } : curso)
-      : [...prev, { turmaId, turmaNome, valorMensalidade: valor }]);
-  };
-
-  const handleSalvarCursos = async () => {
-    setSavingCursos(true);
-    try {
-      const cursosSalvos = await financeiroCursoService.upsertMany(turmas.map((turma) => ({
-        turmaId: turma.id,
-        turmaNome: turma.nome,
-        valorMensalidade: cursosFinanceiros.find((curso) => curso.turmaId === turma.id)?.valorMensalidade ?? 0,
-      })));
-      setCursosFinanceiros(cursosSalvos);
-      queryClient.setQueryData(FINANCEIRO_CURSOS_QUERY_KEY, cursosSalvos);
-      setAbaAtiva('perfil');
-    } finally { setSavingCursos(false); }
-  };
-
-  const handleFieldChange = (alunoId: string, field: 'valorMensalidade' | 'statusPagamento', value: string | number) => {
-    setRegistros((prev) => {
-      const index = prev.findIndex((item) => item.alunoId === alunoId && item.mesReferencia === mesFiltro && item.anoReferencia === anoFiltro);
-      const finalValue = field === 'valorMensalidade' ? (value === '' ? 0 : Number(value)) : value;
-      if (index >= 0) {
-        const updated = [...prev];
-        updated[index] = { ...updated[index], [field]: finalValue } as FinanceiroAluno;
-        return updated;
-      }
-      const aluno = alunosAtivos.find((item) => item.id === alunoId);
-      if (!aluno) return prev;
-      return [...prev, { ...getDefaultRow(aluno, mesFiltro, anoFiltro, modalidadesPorAluno.get(alunoId) ?? 'Boleto', mensalidadesPorTurma.get(aluno.turma) ?? 0), [field]: finalValue } as FinanceiroAluno];
-    });
+  const handleFieldChange = (alunoId: string, field: 'statusPagamento', value: FinanceiroStatus) => {
+    setRascunhos(prev => ({ ...prev, [chaveLinha(alunoId)]: { ...prev[chaveLinha(alunoId)], [field]: value } }));
+    if (value === 'Permuta' && periodoAtual) setValoresEditados(prev => ({ ...prev, [alunoId]: '0' }));
   };
 
   const handleSalvarMensalidade = async (linha: FinanceiroAluno) => {
     setSavingId(linha.alunoId);
+    setErroFinanceiro('');
     try {
+      if (!periodoPermitido) throw new Error('Os registros de mensalidades começam em setembro de 2026.');
+      const existente = await financeiroService.getByAlunoMesAno(linha.alunoId, mesFiltro, anoFiltro);
+      let aluno = alunos.find(item => item.id === linha.alunoId);
+      const valorEditado = periodoAtual && linha.statusPagamento === 'Permuta' ? '0' : valoresEditados[linha.alunoId];
+      if (valorEditado !== undefined && periodoAtual) {
+        const valor = Number(valorEditado);
+        if (!valorEditado.trim() || !Number.isFinite(valor) || valor < 0) {
+          throw new Error('Informe um valor de mensalidade válido, maior ou igual a zero.');
+        }
+        aluno = await updateAluno(linha.alunoId, { mensalidade: valor });
+        setValoresEditados(prev => { const next = { ...prev }; delete next[linha.alunoId]; return next; });
+        // Alterar o cadastro não regrava a parcela que já existe.
+        if (existente && !rascunhos[chaveLinha(linha.alunoId)]?.statusPagamento && linha.statusPagamento !== 'Permuta') return;
+      }
+      if (!existente && aluno?.mensalidade == null) throw new Error('Cadastre a mensalidade no cadastro do aluno antes de registrar o pagamento.');
       const salvo = await financeiroService.upsert({
         ...linha,
+        valorMensalidade: periodoAtual && (linha.statusPagamento === 'Permuta' || existente?.statusPagamento === 'Permuta')
+          ? linha.statusPagamento === 'Permuta' ? 0 : Number(aluno?.mensalidade)
+          : existente?.valorMensalidade ?? Number(aluno?.mensalidade),
         mesReferencia: mesFiltro,
         anoReferencia: anoFiltro,
-        boletoEmitido: 'Não',
+        boletoEmitido: existente?.boletoEmitido ?? 'Não',
       });
+      setRascunhos(prev => { const next = { ...prev }; delete next[chaveLinha(linha.alunoId)]; return next; });
       setRegistros((prev) => [salvo, ...prev.filter((item) => !(item.alunoId === salvo.alunoId && item.mesReferencia === salvo.mesReferencia && item.anoReferencia === salvo.anoReferencia))]);
       queryClient.setQueryData<FinanceiroAluno[]>(FINANCEIRO_QUERY_KEY, (current = []) => [
         salvo,
         ...current.filter((item) => !(item.alunoId === salvo.alunoId && item.mesReferencia === salvo.mesReferencia && item.anoReferencia === salvo.anoReferencia)),
       ]);
-    } finally { setSavingId(null); }
+      await queryClient.invalidateQueries({ queryKey: ['alunos'] });
+    } catch (error) { setErroFinanceiro(mensagemErroFinanceiro(error)); } finally { setSavingId(null); }
   };
 
   if (abaAtiva !== 'gastos' && (loadingAlunos || loadingTurmas)) return <div className="financeiro-loading">Carregando financeiro...</div>;
 
   return (
     <div className="financeiro-page">
-      {abaAtiva !== 'gastos' && <div className="financeiro-summary-grid">
+      {(erroFinanceiro || registrosQuery.error) && <p role="alert">{erroFinanceiro || mensagemErroFinanceiro(registrosQuery.error)}</p>}
+      <div className="financeiro-summary-grid">
         <Card padding="lg" className="financeiro-stat-card blue"><span className="financeiro-stat-label">Total de alunos</span><strong className="financeiro-stat-value">{resumo.totalAlunos}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card green"><span className="financeiro-stat-label">Total pago</span><strong className="financeiro-stat-value">{resumo.totalPagos}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card orange"><span className="financeiro-stat-label">Total pendente</span><strong className="financeiro-stat-value">{resumo.totalPendentes}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card purple"><span className="financeiro-stat-label">Total de permuta</span><strong className="financeiro-stat-value">{resumo.totalPermutas}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card blue-soft"><span className="financeiro-stat-label">Receita prevista</span><strong className="financeiro-stat-value">R$ {resumo.receitaPrevista.toFixed(2).replace('.', ',')}</strong></Card>
-        <Card padding="lg" className="financeiro-stat-card green-soft"><span className="financeiro-stat-label">Receita recebida</span><strong className="financeiro-stat-value">R$ {resumo.receitaRecebida.toFixed(2).replace('.', ',')}</strong></Card>
+        <Card padding="lg" className="financeiro-stat-card green-soft"><span className="financeiro-stat-label">Receita recebida</span><strong className="financeiro-stat-value" aria-live="polite">{!periodoPermitido ? moeda(0) : registrosQuery.isLoading ? 'Carregando...' : registrosQuery.error ? 'Indisponível' : moeda(caixa.receitaRecebida)}</strong></Card>
         <Card padding="lg" className="financeiro-stat-card red-soft"><span className="financeiro-stat-label">Receita pendente</span><strong className="financeiro-stat-value">R$ {resumo.receitaPendente.toFixed(2).replace('.', ',')}</strong></Card>
-        <TotalGastosCard onOpen={() => setAbaAtiva('gastos')} />
-      </div>}
+        <TotalGastosCard onOpen={() => setAbaAtiva('gastos')} valor={valorGastos(caixa.gastos.total)} />
+        <Card padding="lg" className="financeiro-stat-card green"><span className="financeiro-stat-label">Total de gastos pagos</span><strong className="financeiro-stat-value" aria-live="polite">{valorGastos(caixa.gastos.pago)}</strong></Card>
+        <Card padding="lg" className="financeiro-stat-card orange"><span className="financeiro-stat-label">Total de gastos pendentes</span><strong className="financeiro-stat-value" aria-live="polite">{valorGastos(caixa.gastos.pendente)}</strong></Card>
+        <Card padding="lg" className="financeiro-stat-card blue"><span className="financeiro-stat-label">Dinheiro em caixa</span><strong className="financeiro-stat-value" aria-live="polite">{valorCaixa(caixa.dinheiroEmCaixa)}</strong></Card>
+      </div>
 
       <div className="financeiro-tabs" role="tablist" aria-label="Seções do financeiro">
-        <button type="button" role="tab" aria-selected={abaAtiva === 'perfil'} className={abaAtiva === 'perfil' ? 'active' : ''} onClick={() => setAbaAtiva('perfil')}>Perfil Financeiro</button>
-        <button type="button" role="tab" aria-selected={abaAtiva === 'cursos'} className={abaAtiva === 'cursos' ? 'active' : ''} onClick={() => setAbaAtiva('cursos')}>Gest. Curso</button>
         <button type="button" role="tab" aria-selected={abaAtiva === 'mensalidades'} className={abaAtiva === 'mensalidades' ? 'active' : ''} onClick={() => setAbaAtiva('mensalidades')}>Mensalidades</button>
         <button type="button" role="tab" aria-selected={abaAtiva === 'gastos'} className={abaAtiva === 'gastos' ? 'active' : ''} onClick={() => setAbaAtiva('gastos')}>Gastos</button>
       </div>
 
-      {abaAtiva === 'gastos' ? <Gastos /> : abaAtiva === 'perfil' ? (
-        <Card padding="lg" className="financeiro-table-card">
-          <div className="financeiro-section-heading"><h2>Perfil Financeiro</h2><p>Defina se cada aluno paga por boleto ou participa por permuta.</p></div>
-          <div className="financeiro-table-wrap"><table className="financeiro-table financeiro-profile-table">
-            <thead><tr><th>Aluno</th><th>Curso / Turma</th><th>Modalidade</th></tr></thead>
-            <tbody>{alunosAtivos.map((aluno) => <tr key={aluno.id}>
-              <td>{aluno.nome}</td><td>{aluno.turma || 'Sem turma'}</td>
-              <td>
-                <div className="financeiro-modalidade-options" role="radiogroup" aria-label={`Modalidade financeira de ${aluno.nome}`}>
-                  {modalidadeOptions.map((modalidade) => (
-                    <label key={modalidade} className="financeiro-modalidade-option">
-                      <input
-                        type="radio"
-                        name={`modalidade-${aluno.id}`}
-                        value={modalidade}
-                        checked={(modalidadesPorAluno.get(aluno.id) ?? 'Boleto') === modalidade}
-                        onChange={() => handleModalidadeChange(aluno.id, modalidade)}
-                      />
-                      <span>{modalidade}</span>
-                    </label>
-                  ))}
-                </div>
-              </td>
-            </tr>)}</tbody>
-          </table></div>
-          <div className="financeiro-profile-actions">
-            <Button type="button" variant="primary" loading={savingPerfis} onClick={handleSalvarPerfis}>Salvar</Button>
-          </div>
-        </Card>
-      ) : abaAtiva === 'cursos' ? (
-        <Card padding="lg" className="financeiro-table-card">
-          <div className="financeiro-section-heading"><h2>Gestão de Cursos</h2><p>Defina o valor padrão da mensalidade de cada turma.</p></div>
-          <div className="financeiro-table-wrap"><table className="financeiro-table financeiro-profile-table">
-            <thead><tr><th>Curso / Turma</th><th>Valor da mensalidade</th></tr></thead>
-            <tbody>{turmas.map((turma) => <tr key={turma.id}>
-              <td>{turma.nome}</td>
-              <td>
-                <div className="financeiro-course-value-field">
-                  <span className="financeiro-course-value-prefix">R$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    inputMode="decimal"
-                    aria-label={`Mensalidade de ${turma.nome}`}
-                    value={cursosFinanceiros.find((curso) => curso.turmaId === turma.id)?.valorMensalidade ?? 0}
-                    onFocus={(event) => event.currentTarget.select()}
-                    onChange={(event) => handleCursoValueChange(turma.id, turma.nome, Number(event.target.value))}
-                  />
-                  <span className="financeiro-course-value-period">/ mês</span>
-                </div>
-              </td>
-            </tr>)}</tbody>
-          </table></div>
-          <div className="financeiro-profile-actions"><Button type="button" variant="primary" loading={savingCursos} onClick={handleSalvarCursos}>Salvar</Button></div>
-        </Card>
-      ) : <>
+      <div ref={conteudoAbaRef} className="financeiro-conteudo-aba">
+      {abaAtiva === 'gastos' ? <Gastos periodoBloqueado={!gastosPermitidos} mesInicial={!gastosPermitidos ? `${anoFiltro}-${String(mesFiltro).padStart(2, '0')}` : ''} onPeriodoChange={periodo => { setAnoFiltro(periodo ? Number(periodo.slice(0, 4)) : hoje.getFullYear()); setMesFiltro(periodo ? Number(periodo.slice(5, 7)) : hoje.getMonth() + 1); }} /> : <>
         <Card padding="lg" className="financeiro-filters-card"><div className="financeiro-filters">
           <label>Mês<select value={mesFiltro} onChange={(event) => setMesFiltro(Number(event.target.value))}>{meses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
           <label>Ano<select value={anoFiltro} onChange={(event) => setAnoFiltro(Number(event.target.value))}>{anos.map((ano) => <option key={ano} value={ano}>{ano}</option>)}</select></label>
@@ -335,16 +220,17 @@ export const Financeiro: React.FC = () => {
           <label>Status<select value={statusFiltro} onChange={(event) => setStatusFiltro(event.target.value as 'Todos' | FinanceiroStatus)}><option value="Todos">Todos</option>{statusOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
         </div></Card>
         <Card padding="lg" className="financeiro-table-card"><div className="financeiro-table-wrap"><table className="financeiro-table">
-          <thead><tr><th>Aluno</th><th>Curso / Turma</th><th>Valor da mensalidade</th><th>Mês</th><th>Ano</th><th>Situação</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>{linhasFiltradas.length === 0 ? <tr><td colSpan={8} className="financeiro-empty-row">Nenhum aluno encontrado para os filtros selecionados.</td></tr> : linhasFiltradas.map((linha) => <tr key={`${linha.alunoId}-${mesFiltro}-${anoFiltro}`}>
-            <td>{linha.alunoNome}</td><td><div className="financeiro-curso-cell"><span>{linha.curso}</span><small>{linha.turma}</small></div></td>
-            <td><input type="number" min="0" step="0.01" inputMode="decimal" className="financeiro-value-input" value={linha.valorMensalidade} onChange={(event) => handleFieldChange(linha.alunoId, 'valorMensalidade', event.target.value)} /></td>
+          <thead><tr><th>Aluno</th><th>Curso / Turma</th><th>Mensalidade (R$)</th><th>Mês</th><th>Ano</th><th>Situação</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody>{linhasFiltradas.length === 0 ? <tr><td colSpan={8} className="financeiro-empty-row">{periodoPermitido ? 'Nenhum aluno encontrado para os filtros selecionados.' : 'Sem registros neste período. As mensalidades começam em setembro de 2026.'}</td></tr> : linhasFiltradas.map((linha) => <tr key={`${linha.alunoId}-${mesFiltro}-${anoFiltro}`}>
+            <td>{linha.alunoNome}</td><td><div className="financeiro-curso-cell"><span>{linha.curso}</span>{linha.turma && linha.turma !== linha.curso && <small>{linha.turma}</small>}</div></td>
+            <td><input type="number" min="0" step="0.01" inputMode="decimal" className="financeiro-value-input" aria-label={`Mensalidade de ${linha.alunoNome}`} title="Valor individual para as próximas mensalidades. Para editar uma permuta, selecione Pendente." readOnly={!periodoAtual} disabled={savingId === linha.alunoId || linha.statusPagamento === 'Permuta'} value={periodoAtual ? valoresEditados[linha.alunoId] ?? alunos.find(a => a.id === linha.alunoId)?.mensalidade ?? linha.valorMensalidade : linha.valorMensalidade} onChange={event => setValoresEditados(prev => ({ ...prev, [linha.alunoId]: event.target.value }))} />{!linha.id && alunos.find(a => a.id === linha.alunoId)?.mensalidade == null && <small>Mensalidade não cadastrada</small>}{periodoAtual && linha.id && alunos.find(a => a.id === linha.alunoId)?.mensalidade != null && alunos.find(a => a.id === linha.alunoId)?.mensalidade !== linha.valorMensalidade && <small>Parcela gerada: {linha.valorMensalidade.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</small>}</td>
             <td>{meses.find((item) => item.value === mesFiltro)?.label}</td><td>{anoFiltro}</td><td><BadgeStatus status={linha.statusPagamento} /></td>
-            <td><select value={linha.statusPagamento} onChange={(event) => handleFieldChange(linha.alunoId, 'statusPagamento', event.target.value as FinanceiroStatus)}>{statusOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select></td>
+            <td><select aria-label={`Status de ${linha.alunoNome}`} disabled={savingId === linha.alunoId} value={linha.statusPagamento} onChange={(event) => handleFieldChange(linha.alunoId, 'statusPagamento', event.target.value as FinanceiroStatus)}>{(['Pendente', 'Pago', 'Permuta'] as FinanceiroStatus[]).map((item) => <option key={item} value={item}>{item}</option>)}</select></td>
             <td><Button type="button" variant="primary" size="sm" loading={savingId === linha.alunoId} onClick={() => handleSalvarMensalidade(linha)}>Salvar</Button></td>
           </tr>)}</tbody>
         </table></div></Card>
       </>}
+      </div>
     </div>
   );
 };

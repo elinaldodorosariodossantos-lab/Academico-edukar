@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { periodoFinanceiroPermitido } from '../utils/periodoFinanceiro';
 import { frequenciaRegistros } from './frequenciaRegistros';
 import type {
   Aluno,
@@ -27,6 +28,8 @@ const normalizeStringArray = (value: unknown): string[] => {
 };
 
 const normalizeAluno = (aluno: any): Aluno => ({
+  mensalidade: aluno?.mensalidade == null ? null : Number(aluno.mensalidade),
+  mensalidadePermuta: aluno?.mensalidade_permuta === true,
   id: aluno?.id ?? aluno?.ID ?? '',
   nome: aluno?.nome ?? aluno?.['Nome Completo'] ?? '',
   cpf: aluno?.cpf ?? aluno?.['CPF'] ?? '',
@@ -104,6 +107,7 @@ const normalizeFinanceiroPerfil = (item: any): FinanceiroPerfil => ({
   id: item?.id ?? undefined,
   alunoId: item?.aluno_id ?? item?.alunoId ?? '',
   modalidade: (item?.modalidade === 'Permuta' ? 'Permuta' : 'Boleto') as FinanceiroModalidade,
+  valorMensalidade: item?.valor_mensalidade == null ? undefined : Number(item.valor_mensalidade),
   createdAt: item?.created_at,
   updatedAt: item?.updated_at,
 });
@@ -128,6 +132,8 @@ const normalizeFinanceiroAluno = (item: any): FinanceiroAluno => ({
   anoReferencia: Number(item?.ano_referencia ?? item?.anoReferencia ?? new Date().getFullYear()),
   boletoEmitido: (item?.boleto_emitido ?? item?.boletoEmitido ?? 'Não') as BoletoEmitido,
   statusPagamento: normalizeFinanceiroStatus(item?.status_pagamento ?? item?.statusPagamento),
+  modalidade: item?.modalidade ?? (item?.status_pagamento === 'Permuta' ? 'Permuta' : 'Boleto'),
+  dataPagamento: item?.data_pagamento ?? undefined,
   observacoes: item?.observacoes ?? item?.['Observações'] ?? '',
   createdAt: item?.created_at ?? item?.['Data de Criação'],
   updatedAt: item?.updated_at ?? item?.['Data de Atualização'],
@@ -193,6 +199,7 @@ export const alunosService = {
     const client = assertSupabase();
     const payload: Record<string, any> = {
       nome: aluno.nome,
+      mensalidade: aluno.mensalidade ?? null,
       cpf: aluno.cpf || null,
       data_nascimento: aluno.dataNascimento,
       data_inicio: aluno.dataInicio,
@@ -219,6 +226,7 @@ export const alunosService = {
     const client = assertSupabase();
     const payload: Record<string, any> = {
       ...(aluno.nome ? { nome: aluno.nome } : {}),
+      ...(aluno.mensalidade !== undefined ? { mensalidade: aluno.mensalidade } : {}),
       ...(aluno.cpf !== undefined ? { cpf: aluno.cpf || null } : {}),
       ...(aluno.dataNascimento ? { data_nascimento: aluno.dataNascimento } : {}),
       ...(aluno.dataInicio ? { data_inicio: aluno.dataInicio } : {}),
@@ -497,27 +505,21 @@ export const mensagensAutomaticaService = {
 };
 
 export const financeiroService = {
+  async gerarMensalidades(): Promise<void> {
+    const { error } = await assertSupabase().rpc('gerar_mensalidades');
+    if (error) throw error;
+  },
   async getAll(): Promise<FinanceiroAluno[]> {
     const client = assertSupabase();
-    try {
-      const { data, error } = await client
-        .from('financeiro_alunos')
-        .select('*')
-        .order('ano_referencia', { ascending: false })
-        .order('mes_referencia', { ascending: false })
-        .order('aluno_nome', { ascending: true });
-
+    const registros: FinanceiroAluno[] = [];
+    const pageSize = 1000;
+    for (let offset = 0; ; offset += pageSize) {
+      const { data, error } = await client.from('financeiro_alunos').select('*')
+        .order('ano_referencia', { ascending: false }).order('mes_referencia', { ascending: false })
+        .order('aluno_nome', { ascending: true }).order('id').range(offset, offset + pageSize - 1);
       if (error) throw error;
-      return (data || []).map(normalizeFinanceiroAluno);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (
-        isBackendUnavailableError(error) ||
-        /financeiro_alunos|relation .* does not exist|does not exist/i.test(message)
-      ) {
-        return [];
-      }
-      throw error;
+      registros.push(...(data ?? []).map(normalizeFinanceiroAluno));
+      if (!data || data.length < pageSize) return registros;
     }
   },
 
@@ -547,6 +549,9 @@ export const financeiroService = {
   },
 
   async upsert(item: Omit<FinanceiroAluno, 'id' | 'createdAt' | 'updatedAt'>): Promise<FinanceiroAluno> {
+    if (!periodoFinanceiroPermitido(Number(item.mesReferencia), Number(item.anoReferencia))) {
+      throw new Error('Os registros de mensalidades começam em setembro de 2026.');
+    }
     const client = assertSupabase();
     const payload = {
       aluno_id: item.alunoId,
@@ -624,13 +629,14 @@ export const financeiroPerfilService = {
     return normalizeFinanceiroPerfil(data);
   },
 
-  async upsertMany(perfis: Array<Pick<FinanceiroPerfil, 'alunoId' | 'modalidade'>>): Promise<FinanceiroPerfil[]> {
+  async upsertMany(perfis: Array<Pick<FinanceiroPerfil, 'alunoId' | 'modalidade' | 'valorMensalidade'>>): Promise<FinanceiroPerfil[]> {
     const client = assertSupabase();
     if (perfis.length === 0) return [];
 
     const payload = perfis.map((perfil) => ({
       aluno_id: perfil.alunoId,
       modalidade: perfil.modalidade,
+      ...(perfil.valorMensalidade === undefined ? {} : { valor_mensalidade: perfil.valorMensalidade }),
     }));
     const { data, error } = await client
       .from('financeiro_perfis')
@@ -687,6 +693,7 @@ export const frequenciaService = {
       data: item.data,
       turma: item.turma,
       aluno: item.aluno,
+      alunoId: item.aluno_id,
       presenca: item.presenca,
       conteudoMinistrado: item.conteudo_ministrado,
       observacoes: item.observacoes,
@@ -705,6 +712,7 @@ export const frequenciaService = {
       data: item.data,
       turma: item.turma,
       aluno: item.aluno,
+      alunoId: item.aluno_id,
       presenca: item.presenca,
       conteudoMinistrado: item.conteudo_ministrado,
       observacoes: item.observacoes,
@@ -723,6 +731,7 @@ export const frequenciaService = {
       data: item.data,
       turma: item.turma,
       aluno: item.aluno,
+      alunoId: item.aluno_id,
       presenca: item.presenca,
       conteudoMinistrado: item.conteudo_ministrado,
       observacoes: item.observacoes,

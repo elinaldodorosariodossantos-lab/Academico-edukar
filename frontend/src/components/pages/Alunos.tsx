@@ -114,6 +114,7 @@ export const Alunos: React.FC = () => {
       telefone: '',
       turma: '',
       diasAula: [],
+      mensalidade: null,
       status: 'Ativo',
     });
 
@@ -182,6 +183,7 @@ export const Alunos: React.FC = () => {
     e.preventDefault();
     if (isSubmitting) return;
 
+    if (formData.mensalidade != null && (!Number.isFinite(formData.mensalidade) || formData.mensalidade < 0)) return;
     if (!identificationFieldsAreValid) {
       setTouchedFields({ cpf: true, cpfResponsavel: true, email: true });
       return;
@@ -523,6 +525,11 @@ export const Alunos: React.FC = () => {
 
           </div>
 
+          <div className="form-group">
+            <label htmlFor="aluno-mensalidade">Mensalidade (R$)</label>
+            <input id="aluno-mensalidade" type="number" min="0" step="0.01" inputMode="decimal" value={formData.mensalidade ?? ''} onChange={event => setFormData({ ...formData, mensalidade: event.target.value === '' ? null : Number(event.target.value) })} />
+            <small>Valor individual para as próximas competências. Em branco: sem mensalidade cadastrada. Zero é um valor válido.</small>
+          </div>
           <div className="form-group">
               <label>
                 Turma *

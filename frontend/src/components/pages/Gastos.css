@@ -7,7 +7,7 @@
   display: grid; gap: 22px; min-width: 0; padding: 24px; color: var(--expense-text);
 }
 .gastos-page svg { flex-shrink: 0; stroke-width: 1.8; }
-.layout-main .financeiro-page > .gastos-page { padding: 12px 24px 24px; }
+.layout-main .financeiro-conteudo-aba > .gastos-page { padding: 12px 24px 24px; }
 .gastos-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 6px 0 4px; }
 .gastos-kicker { display: inline-flex; align-items: center; gap: 8px; color: #5275ac; font-size: .6875rem; font-weight: 700; letter-spacing: .12em; }
 .gastos-heading h1 { display: flex; align-items: center; gap: 12px; margin: 12px 0 10px; font-size: clamp(1.65rem, 2.5vw, 2rem); letter-spacing: -.04em; line-height: 1.2; }
@@ -114,7 +114,7 @@ body.dark-mode .gastos-page .gastos-actions .btn-outline:hover:not(:disabled) { 
 body.dark-mode .gastos-page .gastos-actions .btn-danger:hover:not(:disabled) { background: #412b32; color: #e9a3a3; border-color: #65404a; }
 @media (max-width: 1100px) { .gastos-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gastos-clear { grid-column: 1 / -1; justify-self: end; } .gastos-page .gastos-stat { padding: 18px; } }
 @media (max-width: 700px) { .gastos-heading { align-items: stretch; flex-direction: column; gap: 18px; } .gastos-summary { grid-template-columns: 1fr; gap: 12px; } .gastos-stat strong { font-size: 1.8rem; margin-top: 12px; } .gastos-stat-heading { font-size: .875rem; } .gastos-page .gastos-create { width: 100%; } }
-@media (max-width: 600px) { .gastos-page { padding: 16px; gap: 18px; } .layout-main .financeiro-page > .gastos-page { padding: 8px 16px 24px; } .gastos-filters, .gastos-form { grid-template-columns: 1fr; } .gastos-clear { justify-self: stretch; } .gastos-list-heading { padding: 18px 16px; } .gastos-table td, .gastos-table th { padding: 13px 16px; } .gastos-page .gastos-actions .btn { width: 44px; height: 44px; min-height: 44px; } }
+@media (max-width: 600px) { .gastos-page { padding: 16px; gap: 18px; } .layout-main .financeiro-conteudo-aba > .gastos-page { padding: 8px 16px 24px; } .gastos-filters, .gastos-form { grid-template-columns: 1fr; } .gastos-clear { justify-self: stretch; } .gastos-list-heading { padding: 18px 16px; } .gastos-table td, .gastos-table th { padding: 13px 16px; } .gastos-page .gastos-actions .btn { width: 44px; height: 44px; min-height: 44px; } }
 @media (prefers-reduced-motion: reduce) { .gastos-page .btn, .gastos-table tbody tr, .gastos-page input, .gastos-page select { transition: none; } .gastos-page .btn:hover:not(:disabled) { transform: none; } }
 
 .gastos-recurrence { display: flex; align-items: flex-end; min-width: 0; }
@@ -126,3 +126,7 @@ body.dark-mode .gastos-page .gastos-actions .btn-danger:hover:not(:disabled) { b
 
 .gastos-recurrence-switch:hover:not(:disabled) { border-color: currentColor; }
 .gastos-recurrence-switch:disabled { cursor: wait; opacity: .6; }
+
+.gastos-form textarea { width: 100%; min-width: 0; min-height: 90px; padding: 10px 12px; border: 1px solid #dbe3ee; border-radius: 10px; background: #f8fafc; color: #18243b; font: inherit; resize: vertical; }
+.gastos-form textarea:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+body.dark-mode .gastos-form textarea { border-color: #2d4665; background: #172638; color: #e2e8f0; }

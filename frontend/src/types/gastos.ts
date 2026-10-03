@@ -7,6 +7,7 @@ export interface GastoInput {
   categoria: CategoriaGasto;
   status: StatusGasto;
   recorrente?: boolean;
+  observacoes?: string;
 }
 export interface Gasto extends GastoInput {
   id: string;

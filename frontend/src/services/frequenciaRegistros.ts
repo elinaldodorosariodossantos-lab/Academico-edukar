@@ -3,7 +3,7 @@ import type { Frequencia } from '../types';
 import { DUPLICATE_FREQUENCIA_MESSAGE } from '../utils/frequencia';
 
 const normalize = (item: any): Frequencia => ({
-  id: item.id, data: item.data, turma: item.turma, aluno: item.aluno, presenca: item.presenca,
+  id: item.id, data: item.data, turma: item.turma, aluno: item.aluno, alunoId: item.aluno_id, presenca: item.presenca,
   conteudoMinistrado: item.conteudo_ministrado, observacoes: item.observacoes,
   professorResponsavel: item.professor_responsavel, createdAt: item.created_at, updatedAt: item.updated_at,
 });
@@ -60,7 +60,7 @@ export const frequenciaRegistros = {
     }
     return callRegistro('criar_registro_frequencia', {
       p_turma: first.turma, p_data: first.data,
-      p_alunos: input.map((item) => ({ aluno: item.aluno, presenca: item.presenca,
+      p_alunos: input.map((item) => ({ aluno: item.aluno, aluno_id: item.alunoId, presenca: item.presenca,
         conteudo_ministrado: item.conteudoMinistrado, observacoes: item.observacoes,
         professor_responsavel: item.professorResponsavel })),
     }, () => createWithoutRpc(input));

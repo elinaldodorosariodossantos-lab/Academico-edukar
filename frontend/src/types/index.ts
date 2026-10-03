@@ -1,6 +1,8 @@
 // Types for the School Class Management System
 
 export interface Aluno {
+  mensalidade?: number | null;
+  mensalidadePermuta?: boolean;
   id: string;
 
   nome: string;
@@ -81,6 +83,7 @@ export interface Horario {
 }
 
 export interface Frequencia {
+  alunoId?: string;
 
   id: string;
 
@@ -154,6 +157,7 @@ export interface FinanceiroPerfil {
   id?: string;
   alunoId: string;
   modalidade: FinanceiroModalidade;
+  valorMensalidade?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -177,6 +181,8 @@ export interface FinanceiroAluno {
   mesReferencia: number;
   anoReferencia: number;
   boletoEmitido: BoletoEmitido;
+  modalidade?: FinanceiroModalidade;
+  dataPagamento?: string;
   statusPagamento: FinanceiroStatus;
   observacoes?: string;
   createdAt?: string;

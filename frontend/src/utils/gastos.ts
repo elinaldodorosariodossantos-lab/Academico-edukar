@@ -9,6 +9,7 @@ export function categoriasGastos(gastos: GastoInput[]): string[] {
 }
 
 export function validarGasto(input: GastoInput): GastoInput {
+  if (input.observacoes !== undefined && (typeof input.observacoes !== 'string' || input.observacoes.length > 2000)) throw new Error('Informe uma observação com até 2000 caracteres.');
   if (input.recorrente !== undefined && typeof input.recorrente !== 'boolean') throw new Error('Informe se o gasto é recorrente.');
   const descricao = input.descricao.trim();
   if (!descricao || descricao.length > 200) throw new Error('Informe uma descrição com até 200 caracteres.');

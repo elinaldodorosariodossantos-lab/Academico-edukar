@@ -55,6 +55,10 @@ export const useAlunos = () => {
       queryClient.setQueryData(ALUNOS_QUERY_KEY, next);
       setSearchResults(null);
       await syncTurmasAfterMutation(next);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['frequencias'] }),
+        queryClient.invalidateQueries({ queryKey: ['financeiro'] }),
+      ]);
       addNotification('Aluno atualizado com sucesso!', 'success');
       return updated;
     } catch (error) {

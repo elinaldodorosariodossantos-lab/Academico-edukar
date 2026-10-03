@@ -5,7 +5,7 @@ import { useFrequencia } from '../../hooks/useFrequencia';
 import { useTurmas } from '../../hooks/useTurmas';
 import { useAlunos } from '../../hooks/useAlunos';
 import type { Frequencia } from '../../types';
-import { displayDate, DUPLICATE_FREQUENCIA_MESSAGE, groupFrequencias, isAbsent, isPresent, localDate } from '../../utils/frequencia';
+import { atualizarNomesFrequencias, displayDate, DUPLICATE_FREQUENCIA_MESSAGE, groupFrequencias, isAbsent, isPresent, localDate } from '../../utils/frequencia';
 import type { FrequenciaGrupo } from '../../utils/frequencia';
 import './FrequenciaHistorico.css';
 
@@ -15,9 +15,10 @@ export const FrequenciaHistorico: React.FC<Props> = ({ newOpen, onCloseNew }) =>
   const { frequencias, isLoading, error, fetchFrequencias, registrarMultipla, updateRegistro, deleteRegistro } = useFrequencia();
   const { turmas, isLoading: loadingTurmas, error: errorTurmas } = useTurmas();
   const { alunos, isLoading: loadingAlunos, error: errorAlunos } = useAlunos();
-  const groups = useMemo(() => groupFrequencias(frequencias, turmas), [frequencias, turmas]);
-  const currentMonth = localDate().slice(0, 7);
-  const monthlyGroups = useMemo(() => groups.filter((group) => group.data?.slice(0, 7) === currentMonth), [groups, currentMonth]);
+  const groups = useMemo(() => groupFrequencias(atualizarNomesFrequencias(frequencias, alunos, turmas), turmas), [frequencias, alunos, turmas]);
+  const [historyMonth, setHistoryMonth] = useState(() => localDate().slice(0, 7));
+  const historyYears = useMemo(() => [...new Set([localDate().slice(0, 4), historyMonth.slice(0, 4), ...groups.map((group) => group.data.slice(0, 4))])].filter((year) => /^\d{4}$/.test(year)).sort().reverse(), [groups, historyMonth]);
+  const monthlyGroups = useMemo(() => groups.filter((group) => group.data?.slice(0, 7) === historyMonth), [groups, historyMonth]);
   const latest = useMemo(() => [...groups].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || (b.data || '').localeCompare(a.data || ''))[0], [groups]);
   const [selected, setSelected] = useState<FrequenciaGrupo | null>(null);
   const [mode, setMode] = useState<'view' | 'edit' | 'delete'>('view');
@@ -33,7 +34,7 @@ export const FrequenciaHistorico: React.FC<Props> = ({ newOpen, onCloseNew }) =>
   const busyRef = useRef(false);
   const turma = turmas.find((item) => item.id === turmaId);
   const duplicate = groups.find((group) => group.turma === (newOpen ? turma?.nome : selected?.turma) && group.data === date && (newOpen || group.key !== selected?.key));
-  const students = useMemo(() => alunos.filter((aluno) => turma && aluno.turma === turma.nome)
+  const students = useMemo(() => alunos.filter((aluno) => turma && (aluno.turma === turma.nome || aluno.turma === turma.id))
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')), [alunos, turma]);
   const rows = newOpen ? students.map((aluno) => ({ id: aluno.id, name: aluno.nome }))
     : (selected?.registros || []).map((registro) => ({ id: registro.id, name: registro.aluno }));
@@ -65,7 +66,7 @@ export const FrequenciaHistorico: React.FC<Props> = ({ newOpen, onCloseNew }) =>
     let saved = false;
     try {
       if (newOpen) {
-        await registrarMultipla(students.map((aluno) => ({ data: date, turma: turma!.nome, aluno: aluno.nome,
+        await registrarMultipla(students.map((aluno) => ({ data: date, turma: turma!.nome, aluno: aluno.nome, alunoId: aluno.id,
           presenca: statuses[aluno.id], conteudoMinistrado: content, observacoes: notes, professorResponsavel: turma!.professor || 'Professor' })));
       } else if (selected) {
         await updateRegistro(selected.registros, date, statuses, { ...(contentChanged ? { conteudoMinistrado: content } : {}), ...(notesChanged ? { observacoes: notes } : {}) });
@@ -119,7 +120,13 @@ export const FrequenciaHistorico: React.FC<Props> = ({ newOpen, onCloseNew }) =>
         </>}
       </Card>
       <Card padding="lg">
-        <div className="frequency-record-heading"><span className="frequency-record-icon"><FiUsers /></span><div><h2>Histórico de frequências</h2><p>{monthlyGroups.length} {monthlyGroups.length === 1 ? 'chamada registrada' : 'chamadas registradas'} neste mês · {currentMonth.split('-').reverse().join('/')}</p></div></div>
+        <div className="frequency-history-header">
+          <div className="frequency-record-heading"><span className="frequency-record-icon"><FiUsers /></span><div><h2>Histórico de frequências</h2><p>{monthlyGroups.length} {monthlyGroups.length === 1 ? 'chamada registrada' : 'chamadas registradas'} no período · {historyMonth.split('-').reverse().join('/')}</p></div></div>
+          <div className="frequency-history-filters">
+            <label htmlFor="frequency-history-month">Mês<select id="frequency-history-month" value={historyMonth.slice(5, 7)} onChange={(event) => setHistoryMonth(`${historyMonth.slice(0, 4)}-${event.target.value}`)}>{Array.from({ length: 12 }, (_, index) => <option key={index} value={String(index + 1).padStart(2, '0')}>{new Date(2026, index, 1).toLocaleDateString('pt-BR', { month: 'long' })}</option>)}</select></label>
+            <label htmlFor="frequency-history-year">Ano<select id="frequency-history-year" value={historyMonth.slice(0, 4)} onChange={(event) => setHistoryMonth(`${event.target.value}-${historyMonth.slice(5, 7)}`)}>{historyYears.map((year) => <option key={year} value={year}>{year}</option>)}</select></label>
+          </div>
+        </div>
         <div className="frequency-history-scroll" tabIndex={0} role="region" aria-label="Tabela de frequências">
           <table className="frequency-history-table"><thead><tr><th scope="col">Data</th><th scope="col">Turma</th><th scope="col">Presentes</th><th scope="col">Ausentes</th><th scope="col">Ações</th></tr></thead><tbody>
             {monthlyGroups.length === 0 ? <tr><td colSpan={5} className="frequency-empty">Nenhuma frequência registrada neste mês.</td></tr> : monthlyGroups.map((group) => <tr key={group.key}>

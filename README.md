@@ -149,9 +149,19 @@ Execute os scripts abaixo no SQL Editor do Supabase, nesta ordem:
 
 ```text
 backend/supabase/schema.sql
+backend/supabase/frequencia_registros.sql
 backend/supabase/alunos_dados.sql
 backend/supabase/financeiro.sql
 ```
+
+Se o banco já está configurado e a tela de frequência pede uma atualização do Supabase,
+execute somente o conteúdo completo de `backend/supabase/frequencia_registros.sql`
+no **SQL Editor** do mesmo projeto usado pela aplicação. Esse script instala as
+funções de criação, edição e exclusão de frequências, incluindo conteúdo da aula
+e observações, e atualiza o cache da API. Pode ser reaplicado sem apagar registros.
+Depois da execução, recarregue a tela e tente salvar novamente. Executar apenas
+`schema.sql` ou editar um arquivo de migração local não instala essas funções no
+projeto remoto.
 
 ### 4. Execute o projeto
 

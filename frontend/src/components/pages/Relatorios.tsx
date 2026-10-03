@@ -4,6 +4,7 @@ import { Card } from '../common';
 import { useAlunos } from '../../hooks/useAlunos';
 import { useTurmas } from '../../hooks/useTurmas';
 import { useFrequencia } from '../../hooks/useFrequencia';
+import { atualizarNomesFrequencias } from '../../utils/frequencia';
 import edukarLogo from '../../../EDUKARXP-horizontal.png';
 import './Relatorios.css';
 
@@ -43,7 +44,8 @@ const carregarLogoDataUrl = async () => {
 export const Relatorios: React.FC = () => {
   const { alunos } = useAlunos();
   const { turmas } = useTurmas();
-  const { frequencias } = useFrequencia();
+  const { frequencias: registrosOriginais } = useFrequencia();
+  const frequencias = useMemo(() => atualizarNomesFrequencias(registrosOriginais, alunos, turmas), [registrosOriginais, alunos, turmas]);
   const hoje = new Date();
   const [mes, setMes] = useState(hoje.getMonth() + 1);
   const [ano, setAno] = useState(hoje.getFullYear());
@@ -89,7 +91,7 @@ export const Relatorios: React.FC = () => {
 
   const resumoAlunos = useMemo(() => {
     const nomes = alunoSelecionado === 'Todos'
-      ? alunosOrdenados.filter((aluno) => turmaSelecionada === 'Todas' || aluno.turma === turmaSelecionada).map((aluno) => aluno.nome)
+      ? [...new Set([...alunosOrdenados.filter((aluno) => turmaSelecionada === 'Todas' || aluno.turma === turmaSelecionada).map((aluno) => aluno.nome), ...frequenciasFiltradas.map((registro) => registro.aluno)])]
       : [alunoSelecionado];
     return nomes.map((nome) => {
       const aluno = alunos.find((item) => item.nome === nome);

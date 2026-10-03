@@ -5,6 +5,14 @@
   padding: 0 0 2rem;
 }
 
+.financeiro-conteudo-aba {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+  scroll-margin-top: 90px;
+}
+
 .financeiro-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -398,3 +406,34 @@ body.dark-mode .financeiro-course-value-prefix {
 
 .financeiro-gastos-link { cursor: pointer; }
 .financeiro-gastos-link:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+/* Mantém as palavras legíveis e concentra a rolagem dentro da tabela. */
+.financeiro-page .financeiro-table-wrap { max-width: 100%; overscroll-behavior-x: contain; }
+.financeiro-page .financeiro-table { min-width: 1140px; table-layout: auto; }
+.financeiro-page .financeiro-table th,
+.financeiro-page .financeiro-table td { overflow-wrap: normal; word-break: normal; line-height: 1.5; padding: 16px; }
+.financeiro-page .financeiro-table th { font-size: .75rem; letter-spacing: .025em; }
+.financeiro-page .financeiro-table td { font-size: .9375rem; }
+.financeiro-page .financeiro-table th:first-child,
+.financeiro-page .financeiro-table td:first-child { min-width: 220px; width: 24%; white-space: normal; }
+.financeiro-page .financeiro-table th:nth-child(2),
+.financeiro-page .financeiro-table td:nth-child(2) { min-width: 180px; width: 20%; white-space: normal; }
+.financeiro-page .financeiro-table th:nth-child(3),
+.financeiro-page .financeiro-table td:nth-child(3) { min-width: 165px; }
+.financeiro-page .financeiro-table th:nth-child(n+4),
+.financeiro-page .financeiro-table td:nth-child(n+4) { white-space: nowrap; }
+.financeiro-page .financeiro-table td:nth-child(4) { min-width: 105px; }
+.financeiro-page .financeiro-table td:nth-child(5) { min-width: 72px; font-variant-numeric: tabular-nums; }
+.financeiro-page .financeiro-table td:nth-child(6) { min-width: 132px; }
+.financeiro-page .financeiro-table td:nth-child(7) { min-width: 175px; }
+.financeiro-page .financeiro-table td:nth-child(8) { min-width: 112px; }
+.financeiro-page .financeiro-table .financeiro-value-input { min-width: 0; max-width: 160px; font-variant-numeric: tabular-nums; }
+.financeiro-page .financeiro-table select { min-width: 140px; padding-right: 2.25rem; }
+.financeiro-page .financeiro-curso-cell { gap: 4px; }
+.financeiro-page .financeiro-curso-cell small { font-size: .8rem; }
+.financeiro-page .financeiro-table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 768px) {
+  .financeiro-page .financeiro-table th,
+  .financeiro-page .financeiro-table td { padding: 12px 14px; }
+  .financeiro-page .financeiro-table-card { min-width: 0; }
+}

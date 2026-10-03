@@ -10,18 +10,18 @@ try {
  await page.goto(base+'/financeiro?aba=gastos&teste=1');
  await expect(page).toHaveURL(base+'/financeiro/gastos?teste=1');
  await expect(page.getByRole('tab',{name:'Gastos',exact:true})).toHaveAttribute('aria-selected','true');
- await page.getByRole('tab',{name:'Perfil Financeiro',exact:true}).click();
- await expect(page).toHaveURL(base+'/financeiro/perfil?teste=1');
+ await page.getByRole('tab',{name:'Mensalidades',exact:true}).click();
+ await expect(page).toHaveURL(base+'/financeiro/mensalidades?teste=1');
  await page.getByRole('button',{name:'Total de Gastos — abrir aba Gastos',exact:true}).click();
  await expect(page).toHaveURL(base+'/financeiro/gastos?teste=1');
  await page.goBack();
- await expect(page.getByRole('tab',{name:'Perfil Financeiro',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.getByRole('tab',{name:'Mensalidades',exact:true})).toHaveAttribute('aria-selected','true');
  await page.goForward();
  await expect(page.getByRole('tab',{name:'Gastos',exact:true})).toHaveAttribute('aria-selected','true');
  await page.reload();
  await expect(page.getByRole('tab',{name:'Gastos',exact:true})).toHaveAttribute('aria-selected','true');
  await page.goto(base+'/gastos');await expect(page).toHaveURL(base+'/financeiro/gastos');
- for(const [name,path] of [['Gest. Curso','cursos'],['Mensalidades','mensalidades']]) {
+ for(const [name,path] of [['Mensalidades','mensalidades']]) {
    await page.getByRole('tab',{name,exact:true}).click();await expect(page).toHaveURL(base+'/financeiro/'+path);
  }
  console.log('OK: rotas, links antigos, parâmetros, card, recarga e histórico do navegador.');

@@ -5,13 +5,13 @@ import { gastosService } from '../services/gastos';
 import type { Gasto, GastoInput } from '../types/gastos';
 
 const KEY = ['gastos'] as const;
-export function useGastos() {
+export function useGastos(observar = true) {
   const cache = useQueryClient();
   const [live, setLive] = useState(false);
-  const query = useQuery({ queryKey: KEY, queryFn: gastosService.list, refetchOnWindowFocus: true });
+  const query = useQuery({ queryKey: KEY, queryFn: gastosService.list, refetchOnWindowFocus: true, refetchInterval: live ? false : 10000 });
   useEffect(() => {
     const client = supabase;
-    if (!client) return;
+    if (!client || !observar) return;
     const channel = client.channel('gastos-lista').on('postgres_changes', { event: '*', schema: 'public', table: 'gastos' }, () => {
       void cache.invalidateQueries({ queryKey: KEY });
     }).subscribe(status => {
@@ -19,7 +19,7 @@ export function useGastos() {
       if (status === 'SUBSCRIBED') void cache.invalidateQueries({ queryKey: KEY });
     });
     return () => { void client.removeChannel(channel); };
-  }, [cache]);
+  }, [cache, observar]);
   const save = async (input: GastoInput, original?: Gasto) => {
     try {
       const saved = await gastosService.save(input, original);
